@@ -3,6 +3,7 @@
 - añadir _ al exec del main: app.exec_
 """
 #comm
+#holi
 
 from PyQt5.QtWidgets import QApplication, QMainWindow 
 from PyQt5 import uic

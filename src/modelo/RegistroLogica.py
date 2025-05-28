@@ -53,7 +53,7 @@ class RegistroLogica:
 
     def enviar_correo_confirmacion(self, destinatario, codigo):
         remitente = "uniconectaule@gmail.com"
-        contraseña = "Asdfghj1"
+        contraseña = "Asdfghj1."
 
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
