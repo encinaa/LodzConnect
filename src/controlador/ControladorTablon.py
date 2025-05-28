@@ -12,17 +12,15 @@ class ControladorTablon:
         self.correo_usuario = correo_usuario
         self.usuario_dao = UsuarioDAO()
 
-        # Al pulsar el botón ☰ mostramos/ocultamos menú lateral
-        self._vista.BotonMenu.clicked.connect(self.toggle_menu_lateral)
+        # Conectar señales personalizadas de la vista a los métodos
+        self._vista.toggle_menu_clicked.connect(self.toggle_menu_lateral)
+        self._vista.mi_perfil_clicked.connect(self.ir_a_miperfil)
+        self._vista.cerrar_sesion_clicked.connect(self.cerrar_sesion)
+        self._vista.test_clicked.connect(self.ir_a_test)
+        self._vista.publicacion_clicked.connect(self.ir_a_publicacion)
+        self._vista.eventos_clicked.connect(self.ir_a_eventos)
 
-        # Conectar botones del menú lateral a sus funciones
-        self._vista.MenuLateral.BotonMiPerfil.clicked.connect(self.ir_a_miperfil)
-        self._vista.MenuLateral.BotonCerrarSesion.clicked.connect(self.cerrar_sesion)
-        self._vista.MenuLateral.BotonTest.clicked.connect(self.ir_a_test)
-        self._vista.MenuLateral.BotonPublicacion.clicked.connect(self.ir_a_publicacion)
-        self._vista.MenuLateral.BotonEventos.clicked.connect(self.ir_a_eventos)
-
-        # Mantener referencias para evitar que las ventanas se destruyan
+        # Mantener referencias a ventanas hijas
         self.ventana_miperfil = None
         self.ventana_principal = None
         self.ventana_test = None
@@ -30,32 +28,26 @@ class ControladorTablon:
         self.ventana_eventos = None
 
     def toggle_menu_lateral(self):
-        print("Toggle menu activado")
         visible = self._vista.MenuLateral.isVisible()
         self._vista.MenuLateral.setVisible(not visible)
         self._vista.MenuLateral.raise_()
 
     def ir_a_miperfil(self):
-        print("Ir a Mi Perfil")
         self.ventana_miperfil = MiPerfil()
-        # Si quieres pasar el correo_usuario o algo similar, aquí puedes
         self.ventana_miperfil.show()
         self._vista.hide()
 
     def ir_a_test(self):
-        print("Ir a Test")
         self.ventana_test = Test()
         self.ventana_test.show()
         self._vista.hide()
 
     def ir_a_publicacion(self):
-        print("Ir a Publicacion")
         self.ventana_publicacion = Publicacion()
         self.ventana_publicacion.show()
         self._vista.hide()
 
     def ir_a_eventos(self):
-        print("Ir a Eventos")
         self.ventana_eventos = Eventos()
         self.ventana_eventos.show()
         self._vista.hide()
@@ -69,7 +61,6 @@ class ControladorTablon:
             QMessageBox.No
         )
         if confirmacion == QMessageBox.Yes:
-            print("Cerrar sesión confirmada")
             self.ventana_principal = PáginaPrincipal()
             self.ventana_principal.show()
             self._vista.close()
