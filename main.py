@@ -2,6 +2,7 @@
 - sustituir PyQt6 por PyQt5
 - añadir _ al exec del main: app.exec_
 """
+#comm
 
 from PyQt5.QtWidgets import QApplication, QMainWindow 
 from PyQt5 import uic
