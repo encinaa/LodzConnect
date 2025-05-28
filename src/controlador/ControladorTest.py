@@ -1,5 +1,5 @@
-# src/controlador/ControladorTest.py
-class ControladorTest:
+from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
+
+class ControladorTest(ControladorBaseNavegable):
     def __init__(self, vista, correo_usuario):
-        self._vista = vista
-        self.correo_usuario = correo_usuario
+        super().__init__(vista, correo_usuario)

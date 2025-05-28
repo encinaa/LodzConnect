@@ -9,6 +9,8 @@ from src.controlador.ControladorTest import ControladorTest
 from src.controlador.ControladorPublicacion import ControladorPublicacion
 from src.controlador.ControladorEventos import ControladorEventos
 from src.modelo.dao.UsuarioDAO import UsuarioDAO
+from src.vista.PublicacionPopup import PublicacionPopup
+from src.controlador.ControladorPopupPublicacion import ControladorPopupPublicacion
 
 
 
@@ -36,28 +38,24 @@ class ControladorTablon:
     def abrir_miperfil(self):
         self.ventana_miperfil = MiPerfil()
         self.controlador_miperfil = ControladorMiPerfil(self.ventana_miperfil, self.correo_usuario)
-        self.controlador_miperfil.set_vista_anterior(self._vista)
         self.ventana_miperfil.show()
         self._vista.hide()
 
     def abrir_test(self):
         self.ventana_test = Test()
         self.controlador_test = ControladorTest(self.ventana_test, self.correo_usuario)
-        self.controlador_test.set_vista_anterior(self._vista)
         self.ventana_test.show()
         self._vista.hide()
 
     def abrir_publicacion(self):
         self.ventana_publicacion = Publicacion()
         self.controlador_publicacion = ControladorPublicacion(self.ventana_publicacion, self.correo_usuario)
-        self.controlador_publicacion.set_vista_anterior(self._vista)
         self.ventana_publicacion.show()
         self._vista.hide()
 
     def abrir_eventos(self):
         self.ventana_eventos = Eventos()
         self.controlador_eventos = ControladorEventos(self.ventana_eventos, self.correo_usuario)
-        self.controlador_eventos.set_vista_anterior(self._vista)
         self.ventana_eventos.show()
         self._vista.hide()
 
@@ -83,4 +81,7 @@ class ControladorTablon:
         else:
             print("Usuario canceló cierre de sesión")
 
-
+    def abrir_publicacion(self):
+        popup = PublicacionPopup()
+        controlador_popup = ControladorPopupPublicacion(popup, self.correo_usuario)
+        popup.exec_()
