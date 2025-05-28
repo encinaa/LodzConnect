@@ -18,24 +18,31 @@ class Tablon(QMainWindow, Form):
         super().__init__()
         self.setupUi(self)
 
-        # Buscar botones por nombre dentro de MenuLateral
-        boton_miperfil = self.findChild(QPushButton, "BotonMiPerfil")
-        boton_cerrarsesion = self.findChild(QPushButton, "BotonCerrarSesion")
-        boton_test = self.findChild(QPushButton, "BotonTest")
-        boton_publicacion = self.findChild(QPushButton, "BotonPublicacion")
-        boton_eventos = self.findChild(QPushButton, "BotonEventos")
-        boton_tablon = self.findChild(QPushButton, "BotonTablon")
+        # Buscar botones por nombre globalmente (sin depender de MenuLateral)
+        self.boton_miperfil = self.findChild(QPushButton, "BotonMiPerfil")
+        self.boton_cerrarsesion = self.findChild(QPushButton, "BotonCerrarSesion")
+        self.boton_test = self.findChild(QPushButton, "BotonTest")
+        self.boton_publicacion = self.findChild(QPushButton, "BotonPublicacion")
+        self.boton_eventos = self.findChild(QPushButton, "BotonEventos")
+        self.boton_tablon = self.findChild(QPushButton, "BotonTablon")
 
-        # Conectar señales
-        if boton_miperfil:
-            boton_miperfil.clicked.connect(self.mi_perfil_clicked)
-        if boton_cerrarsesion:
-            boton_cerrarsesion.clicked.connect(self.cerrar_sesion_clicked)
-        if boton_test:
-            boton_test.clicked.connect(self.test_clicked)
-        if boton_publicacion:
-            boton_publicacion.clicked.connect(self.publicacion_clicked)
-        if boton_eventos:
-            boton_eventos.clicked.connect(self.eventos_clicked)
-        if boton_tablon:
-            boton_tablon.clicked.connect(self.tablon_clicked)
+        # Conectar botones a señales personalizadas
+        if self.boton_miperfil:
+            self.boton_miperfil.clicked.connect(self.mi_perfil_clicked)
+
+        if self.boton_cerrarsesion:
+            print("✅ BotonCerrarSesion encontrado")  # Debug
+            self.boton_cerrarsesion.clicked.connect(lambda: print("Botón cerrar sesión pulsado"))  # Debug
+            self.boton_cerrarsesion.clicked.connect(self.cerrar_sesion_clicked)
+
+        if self.boton_test:
+            self.boton_test.clicked.connect(self.test_clicked)
+
+        if self.boton_publicacion:
+            self.boton_publicacion.clicked.connect(self.publicacion_clicked)
+
+        if self.boton_eventos:
+            self.boton_eventos.clicked.connect(self.eventos_clicked)
+
+        if self.boton_tablon:
+            self.boton_tablon.clicked.connect(self.tablon_clicked)

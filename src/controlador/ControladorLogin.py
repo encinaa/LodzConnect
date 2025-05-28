@@ -1,6 +1,7 @@
 
 from PyQt5.QtWidgets import QMessageBox
 from src.vista.Tablon import Tablon
+from src.controlador.ControladorTablon import ControladorTablon
 from src.modelo.dao.UsuarioDAO import UsuarioDAO
 from src.modelo.LoginLogica import LoginLogica
 
@@ -27,6 +28,7 @@ class ControladorLogin:
         exito, mensaje = self.logica.autenticar_usuario(correo, contraseña)
         if exito:
             self.ventana_tablon = Tablon()
+            self.controlador_tablon = ControladorTablon(self.ventana_tablon, correo)  # ← CONECTA EL CONTROLADOR
             self.ventana_tablon.show()
             self._vista.close()
         else:
