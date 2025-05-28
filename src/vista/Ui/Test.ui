@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Mi Perfil</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+    QMainWindow {
+        background-color: #f0f4f1;
+    }
+    QPushButton {
+        background-color: #2e7d32;
+        color: white;
+        border-radius: 8px;
+        font: bold 10pt &quot;Segoe UI&quot;;
+        padding: 8px;
+    }
+    QPushButton:hover {
+        background-color: #388e3c;
+    }
+   </string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="sidebar">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>191</width>
+      <height>600</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #cccccc;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayoutSidebar">
+     <item>
+      <widget class="QPushButton" name="BotonTablon">
+       <property name="styleSheet">
+        <string notr="true">      QPushButton:hover {
+        background-color: #388e3c;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Tablón</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BotonMiPerfil">
+       <property name="styleSheet">
+        <string notr="true">      QPushButton:hover {
+        background-color: #388e3c;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Mi Perfil</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BotonEventos">
+       <property name="styleSheet">
+        <string notr="true">      QPushButton:hover {
+        background-color: #388e3c;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Eventos</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BotonTest">
+       <property name="styleSheet">
+        <string notr="true">
+      QPushButton:hover {
+        background-color: #388e3c;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Test</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BotonPublicacion">
+       <property name="styleSheet">
+        <string notr="true">      QPushButton:hover {
+        background-color: #388e3c;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Añadir publicación</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BotonCerrarSesion">
+       <property name="styleSheet">
+        <string notr="true">      QPushButton:hover {
+        background-color: #388e3c;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Cerrar sesión</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="mainLabel">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>30</y>
+      <width>600</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18pt &quot;Century&quot;; color: #388e3c;</string>
+    </property>
+    <property name="text">
+     <string>Test</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
