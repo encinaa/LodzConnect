@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import uic
 
-Form, Window = uic.loadUiType("./src/vista/Ui/EditarPerfil.ui")  # Asegúrate de que el archivo .ui se llama así
+Form, Window = uic.loadUiType("./src/vista/Ui/EditarPerfil2.ui")  # Asegúrate de que el archivo .ui se llama así
 
 class EditarPerfil(QMainWindow, Form):
     # Señales personalizadas

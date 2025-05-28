@@ -6,9 +6,12 @@ from src.vista.Publicacion import Publicacion
 from src.vista.Eventos import Eventos
 from src.controlador.ControladorMiPerfil import ControladorMiPerfil
 from src.controlador.ControladorTest import ControladorTest
-#from src.controlador.ControladorPublicacion import ControladorPublicacion
-#from src.controlador.ControladorEventos import ControladorEventos
+from src.controlador.ControladorPublicacion import ControladorPublicacion
+from src.controlador.ControladorEventos import ControladorEventos
 from src.modelo.dao.UsuarioDAO import UsuarioDAO
+
+
+
 
 class ControladorTablon:
     def __init__(self, vista, correo_usuario):
@@ -59,7 +62,7 @@ class ControladorTablon:
         self._vista.hide()
 
     def cerrar_sesion(self):
-        print("🚪 Método cerrar_sesion() llamado")
+        print("Método cerrar_sesion() llamado")
         confirmacion = QMessageBox.question(
             self._vista,
             "Cerrar sesión",
@@ -68,11 +71,16 @@ class ControladorTablon:
             QMessageBox.No
         )
         if confirmacion == QMessageBox.Yes:
-            print("✅ Usuario confirmó cierre de sesión")
+            print("Usuario confirmó cierre de sesión")
+
+            from src.controlador.ControladorPaginaPrincipal import ControladorPaginaPrincipal
+
+
             self.ventana_principal = PáginaPrincipal()
+            self.controlador_principal = ControladorPaginaPrincipal(self.ventana_principal)
             self.ventana_principal.show()
             self._vista.close()
         else:
-            print("❌ Usuario canceló cierre de sesión")
+            print("Usuario canceló cierre de sesión")
 
 
