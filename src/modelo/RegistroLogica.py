@@ -52,8 +52,8 @@ class RegistroLogica:
         return ''.join(str(random.randint(0, 9)) for _ in range(longitud))
 
     def enviar_correo_confirmacion(self, destinatario, codigo):
-        remitente = "aplicacion@gmail.com"
-        contraseña = "1234"
+        remitente = "uniconectaule@gmail.com"
+        contraseña = "Asdfghj1"
 
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
