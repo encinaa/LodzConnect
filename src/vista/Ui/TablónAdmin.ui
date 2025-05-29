@@ -72,6 +72,18 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="BotonGestion">
+       <property name="styleSheet">
+        <string notr="true">      QPushButton:hover {
+		background-color: #cccccc;
+      }</string>
+       </property>
+       <property name="text">
+        <string>Gestión</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="BotonCrearTest">
        <property name="styleSheet">
         <string notr="true">      QPushButton:hover {
