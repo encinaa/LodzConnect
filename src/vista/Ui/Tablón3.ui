@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Panel Principal</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../../../recursos.qrc">
+    <normaloff>:/src/vista/imagenes/logoUniConecta.png</normaloff>:/src/vista/imagenes/logoUniConecta.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">
     QMainWindow {
@@ -165,6 +169,8 @@ color: #388e3c;</string>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../recursos.qrc"/>
+ </resources>
  <connections/>
 </ui>
