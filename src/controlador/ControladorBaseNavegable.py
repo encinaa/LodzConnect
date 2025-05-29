@@ -1,4 +1,4 @@
-# src/controlador/ControladorBaseNavegable.py
+# clase padre
 from abc import ABC
 from PyQt5.QtWidgets import QMessageBox
 from src.modelo.dao.UsuarioDAO import UsuarioDAO
