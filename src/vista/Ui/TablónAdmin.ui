@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true">
     QMainWindow {
-        background-color: #f0f4f1;
+		background-color: #cccccc;
     }
     QPushButton {
         background-color: #2e7d32;
@@ -41,7 +41,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #cccccc;</string>
+     <string notr="true">background-color: #388e3c;</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
@@ -51,7 +51,7 @@
       <widget class="QPushButton" name="BotonTablon">
        <property name="styleSheet">
         <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
+		background-color: #cccccc;
       }</string>
        </property>
        <property name="text">
@@ -60,10 +60,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="BotonEventos">
+      <widget class="QPushButton" name="BotonAnadirEventos">
        <property name="styleSheet">
         <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
+		background-color: #cccccc;
       }</string>
        </property>
        <property name="text">
@@ -72,11 +72,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="BotonTest">
+      <widget class="QPushButton" name="BotonCrearTest">
        <property name="styleSheet">
-        <string notr="true">
-      QPushButton:hover {
-        background-color: #388e3c;
+        <string notr="true">      QPushButton:hover {
+		background-color: #cccccc;
       }</string>
        </property>
        <property name="text">
@@ -88,7 +87,7 @@
       <widget class="QPushButton" name="BotonCerrarSesion">
        <property name="styleSheet">
         <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
+		background-color: #cccccc;
       }</string>
        </property>
        <property name="text">
@@ -123,6 +122,9 @@ color: #388e3c;</string>
       <width>661</width>
       <height>481</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #cccccc;</string>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
