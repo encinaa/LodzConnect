@@ -1,7 +1,11 @@
-# src/vista/PopupPublicacion.py
+#PRIMERA VERSION, NO VALE CREO
+
+"""
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
 from PyQt5.QtCore import pyqtSignal
 
+
+#para q salga el widget de la publi, le quita el ? e hice q se guardara en la bbdd
 class PopupPublicacion(QDialog):
     publicar_clicked = pyqtSignal()
     volver_clicked = pyqtSignal()
@@ -28,3 +32,4 @@ class PopupPublicacion(QDialog):
 
     def get_texto_publicacion(self):
         return self.texto_publicacion.toPlainText()
+"""

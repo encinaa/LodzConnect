@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSignal
 Form, Window = uic.loadUiType("./src/vista/Ui/Registro3.ui")
 
 class Registro(QMainWindow, Form):
-    # Señales para los botones
+    # Señales para los botones SIEMPRE VAN A SER pyqtSignal
     registro_clicked = pyqtSignal()
     volver_clicked = pyqtSignal()
 
@@ -15,6 +15,6 @@ class Registro(QMainWindow, Form):
         super().__init__()
         self.setupUi(self)  # Inicializa los widgets
 
-        # Conectar los botones a las señales personalizadas
+        # Conectar los botones a las señales
         self.BotonRegistro.clicked.connect(self.registro_clicked)
         self.BotonAtras.clicked.connect(self.volver_clicked)

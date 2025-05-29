@@ -1,3 +1,5 @@
+
+"""
 from src.modelo.conexion.Conexion import Conexion
 from src.modelo.vo.UserVo import UserVo
 
@@ -24,4 +26,4 @@ class UserDao(Conexion): #pide los datos a la bbdd con los SELECT y los almacena
             print("e")  #para controlar excepciones
 
         return usuarios
-
+"""

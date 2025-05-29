@@ -12,7 +12,6 @@ class ControladorRegistro:
         self.logica = RegistroLogica(self.usuario_dao, self.estudiante_dao)
         self.vista_principal = None
 
-        # Conectar señales de la vista a métodos
         self._vista.registro_clicked.connect(self.on_register_clicked)
         self._vista.volver_clicked.connect(self.on_volver_clicked)
 

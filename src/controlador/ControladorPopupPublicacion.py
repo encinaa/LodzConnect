@@ -15,11 +15,11 @@ class ControladorPopupPublicacion:
         texto = self.vista.texto.toPlainText().strip()
         if texto:
             nueva_publicacion = PublicacionVO(
-                idPublic=None,  # Asumimos que la base de datos lo genera
+                idPublic=None, 
                 fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                listaEtiquetados=[],  # Dejamos vacío como pediste
+                listaEtiquetados=[], 
                 cuentaOrigen=self.correo_usuario,
-                descripcion=texto      # Aquí va el contenido del usuario
+                descripcion=texto    
             )
             self.dao.insertar_publicacion(nueva_publicacion)
             QMessageBox.information(self.vista, "Publicado", "Tu publicación se ha guardado.")
