@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>UniConecta</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../recursos.qrc">
+    <normaloff>:/imagenes/logoUniConecta.png</normaloff>:/imagenes/logoUniConecta.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color: #f0f4f8;</string>
   </property>
