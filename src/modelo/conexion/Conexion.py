@@ -1,7 +1,7 @@
 import jaydebeapi
 
 class Conexion:
-    def __init__(self, host='localhost', database='UniConecta', user='root', password='Tib1623iya.'):
+    def __init__(self, host='localhost', database='UniConecta', user='root', password='LA BUENA'):
         self._host = host
         self._database = database
         self._user = user
