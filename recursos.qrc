@@ -1,5 +1,5 @@
 <RCC>
   <qresource>
-    <file>imagenes/logoUniConecta.png</file>
+    <file>src/vista/imagenes/logoUniConecta.png</file>
   </qresource>
 </RCC>
