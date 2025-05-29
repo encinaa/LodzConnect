@@ -10,7 +10,7 @@ class ControladorMiPerfil(ControladorBaseNavegable):
         self.usuario_vo = None  # Objeto de valor del usuario
         
         # Conectar señales
-        self.vista.editar_perfil_clicked.connect(self.editar_perfil)
+        self._vista.editar_perfil_clicked.connect(self.editar_perfil)
         self.cargar_datos_perfil()
 
     def cargar_datos_perfil(self):
