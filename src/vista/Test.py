@@ -1,4 +1,3 @@
-# src/vista/Eventos.py
 from PyQt5 import uic
 from src.vista.VistaNavegable import VistaNavegable
 

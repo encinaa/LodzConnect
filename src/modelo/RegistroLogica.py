@@ -58,7 +58,8 @@ class RegistroLogica:
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
         ¡Hola!
-        Gracias por registrarte. Tu código de confirmación es: {codigo}
+        Gracias por registrarte. Tu código de confirmación para recuperar posteriormente tu contraseña es: {codigo}
+        ¡Ten cuidado no la pierdas!
         """
 
         mensaje = MIMEMultipart()

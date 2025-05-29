@@ -16,19 +16,24 @@ class ControladorMiPerfil(ControladorBaseNavegable):
     def cargar_datos_perfil(self):
         """Carga los datos del usuario usando el DAO"""
         try:
-            # 1. El DAO obtiene los datos de la base de datos
+            # Obtener el VO del usuario desde la tabla Usuario
             self.usuario_vo = self.usuario_dao.obtener_por_correo(self.correo_usuario)
-            
+
             if self.usuario_vo:
-                # 2. Actualizar la vista con el VO
-                self.vista.label_nombre.setText(self.usuario_vo.nombre)
-                self.vista.label_correo.setText(self.usuario_vo.correo)
-                # Puedes agregar más campos como:
-                # self.vista.label_bio.setText(self.usuario_vo.biografia)
-                
+                self._vista.label_correo.setText(self.usuario_vo.correo)
+
+                # Obtener nombre y edad desde la tabla Estudiantes
+                datos_estudiante = self.usuario_dao.obtener_datos_estudiante(self.correo_usuario)
+                if datos_estudiante:
+                    nombre, edad = datos_estudiante
+                    self._vista.label_Usuario.setText(nombre)
+                    self._vista.label_edad.setText(str(edad))
+                else:
+                    self._vista.label_Usuario.setText("Desconocido")
+                    self._vista.label_edad.setText("-")
         except Exception as e:
             print(f"Error al cargar perfil: {e}")
-            # Opcional: Mostrar QMessageBox de error
+            # QMessageBox de error si quieres
 
     def editar_perfil(self):
         """Maneja la navegación a editar perfil"""
@@ -44,6 +49,5 @@ class ControladorMiPerfil(ControladorBaseNavegable):
         vista_editar.setWindowModality(2)  # Modal
         vista_editar.show()
         
-        # Si EditarPerfil emite señal de actualización
         if hasattr(vista_editar, 'perfil_actualizado'):
             vista_editar.perfil_actualizado.connect(self.cargar_datos_perfil)

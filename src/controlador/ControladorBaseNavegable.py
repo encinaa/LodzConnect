@@ -12,7 +12,7 @@ class ControladorBaseNavegable(ABC):
         # Para guardar referencias
         self._controladores = {}
 
-        # Conexiones de señales a métodos
+        # ESTAN TODOS AQUI PERO IGUAL HABIA Q PONERLOS EN LA VISTA
         self._vista.mi_perfil_clicked.connect(self.abrir_miperfil)
         self._vista.cerrar_sesion_clicked.connect(self.cerrar_sesion)
         self._vista.test_clicked.connect(self.abrir_test)

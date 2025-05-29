@@ -1,9 +1,10 @@
-
 from PyQt5.QtWidgets import QMessageBox
-from src.vista.Tablon import Tablon
-from src.controlador.ControladorTablon import ControladorTablon
 from src.modelo.dao.UsuarioDAO import UsuarioDAO
 from src.modelo.LoginLogica import LoginLogica
+from src.vista.Tablon import Tablon
+from src.controlador.ControladorTablon import ControladorTablon
+from src.vista.TablonAdmin import TablonAdmin
+from src.controlador.ControladorTablonAdmin import ControladorTablonAdmin
 
 class ControladorLogin:
     def __init__(self, vista):
@@ -25,14 +26,22 @@ class ControladorLogin:
         correo = self._vista.iniciarSesion_correo.text()
         contraseña = self._vista.iniciarSesion_contrasena.text()
 
-        exito, mensaje = self.logica.autenticar_usuario(correo, contraseña)
+        exito, tipo_usuario = self.logica.autenticar_usuario(correo, contraseña)
         if exito:
-            self.ventana_tablon = Tablon()
-            self.controlador_tablon = ControladorTablon(self.ventana_tablon, correo)  # ← CONECTA EL CONTROLADOR
-            self.ventana_tablon.show()
+            if tipo_usuario == "estudiante":
+                self.ventana_tablon = Tablon()
+                self.controlador_tablon = ControladorTablon(self.ventana_tablon, correo)
+                self.ventana_tablon.show()
+            elif tipo_usuario == "administrador":
+                self.ventana_admin = TablonAdmin()
+                self.controlador_admin = ControladorTablonAdmin(self.ventana_admin, correo)
+                self.ventana_admin.show()
+            else:
+                self.mostrar_mensaje_error("Error", "Tipo de usuario desconocido.")
+                return
             self._vista.close()
         else:
-            self.mostrar_mensaje_error("Error de autenticación", mensaje)
+            self.mostrar_mensaje_error("Error de autenticación", tipo_usuario)
 
     def on_volver_clicked(self):
         if self.vista_principal is not None:
@@ -44,7 +53,7 @@ class ControladorLogin:
         print(f"Recuperar contraseña para: {correo}")
 
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Critical)
+        msg.setIcon(QMessageBox.Warning)
         msg.setWindowTitle("Recuperación de contraseña")
         msg.setText(f"Para recuperar su contraseña asociada a {correo}, por favor pase por secretaría.")
         msg.setStyleSheet("""
@@ -69,7 +78,7 @@ class ControladorLogin:
 
     def mostrar_mensaje_error(self, titulo, mensaje):
         msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
+        msg.setIcon(QMessageBox.Critical)
         msg.setWindowTitle(titulo)
         msg.setText(mensaje)
         msg.setStyleSheet("""

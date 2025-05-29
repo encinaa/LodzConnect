@@ -7,11 +7,11 @@ class LoginLogica:
         self.usuario_dao = usuario_dao
 
     def validar_correo(self, correo):
-        return re.match(r"[^@]+@estudiantes\.unileon\.es$", correo)
+        return re.match(r"[^@]+@(estudiantes\.)?unileon\.es$", correo)
 
     def autenticar_usuario(self, correo, contraseña):
         if not self.validar_correo(correo):
-            return False, "Debes usar un correo institucional válido: usuario@estudiantes.unileon.es"
+            return False, "Debes usar un correo institucional válido: usuario@estudiantes.unileon.es o usuario@estudiantes.unileon.es"
 
         if len(correo.strip()) <= 3:
             return False, "Correo inválido."
@@ -24,4 +24,10 @@ class LoginLogica:
         if not contraseña_real or contraseña_real != loginVO.contraseña:
             return False, "Contraseña incorrecta."
 
-        return True, "Autenticación exitosa."
+        # ¡¡¡¡¡Determinar si es estudiante o administrador por el correo
+        if "@estudiantes.unileon.es" in correo:
+            return True, "estudiante"
+        elif "@unileon.es" in correo:
+            return True, "administrador"
+        else:
+            return False, "Tipo de usuario no reconocido."
