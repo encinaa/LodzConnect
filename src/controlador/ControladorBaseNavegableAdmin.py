@@ -39,16 +39,13 @@ class ControladorBaseNavegableAdmin(ABC):
         """
 
     def abrir_gestion(self):
-        pass
-        #FALTA VISTA
-        """
         from src.vista.GestionAdmin import GestionAdmin
         from src.controlador.ControladorGestionAdmin import ControladorGestionAdmin
         vista = GestionAdmin()
         self._controladores["gestion_admin"] = ControladorGestionAdmin(vista, self.correo_usuario)
         vista.show()
         self._vista.close()
-        """
+
 
     def abrir_test(self):
         #CREO Q ES UN POPUP

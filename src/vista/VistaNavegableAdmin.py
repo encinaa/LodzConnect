@@ -13,11 +13,11 @@ class VistaNavegableAdmin(QMainWindow):
 
     def conectar_botones_navegacion(self):
         botones = {
-            "BotonTablonAdmin": self.tablon_clicked,
-            "BotonEventosAdmin": self.eventos_clicked,
-            "BotonGestionAdmin": self.gestion_clicked,
-            "BotonTestAdmin": self.test_clicked,
-            "BotonCerrarSesionAdmin": self.cerrar_sesion_clicked,
+            "BotonTablon": self.tablon_clicked,
+            "BotonAnadirEventos": self.eventos_clicked,
+            "BotonGestion": self.gestion_clicked,
+            "BotonCrearTest": self.test_clicked,
+            "BotonCerrarSesion": self.cerrar_sesion_clicked,
         }
 
         for nombre_boton, señal in botones.items():
