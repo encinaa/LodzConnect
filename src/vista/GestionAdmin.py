@@ -1,9 +1,9 @@
 from PyQt5 import uic
 from src.vista.VistaNavegableAdmin import VistaNavegableAdmin
 
-Form, _ = uic.loadUiType("./src/vista/Ui/TablónAdmin.ui")
+Form, _ = uic.loadUiType("./src/vista/Ui/Gestión.ui")
 
-class TablonAdmin(VistaNavegableAdmin, Form):
+class GestionAdmin(VistaNavegableAdmin, Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)

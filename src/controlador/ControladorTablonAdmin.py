@@ -1,5 +1,5 @@
-from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
+from src.controlador.ControladorBaseNavegableAdmin import ControladorBaseNavegableAdmin
 
-class ControladorTablonAdmin(ControladorBaseNavegable):
+class ControladorTablonAdmin(ControladorBaseNavegableAdmin):
     def __init__(self, vista, correo_usuario):
         super().__init__(vista, correo_usuario)

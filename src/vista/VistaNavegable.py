@@ -1,4 +1,4 @@
-# ESTA ES LA PADRE DE TODA LA COLUMNA DE LA IZQDA EN TABLON
+# ESTA ES LA PADRE DE TODA LA COLUMNA DE LA IZQDA EN TABLON DEL ESTUDIANTE (esq pa copiar codigo heredamos mejor)
 from PyQt5.QtWidgets import QMainWindow, QPushButton
 from PyQt5.QtCore import pyqtSignal
 
