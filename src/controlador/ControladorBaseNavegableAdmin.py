@@ -27,14 +27,12 @@ class ControladorBaseNavegableAdmin(ABC):
         self._vista.close()
 
     def abrir_eventos(self):
-        '''
-        from src.vista.EventosAdmin import EventosAdmin
-        from src.controlador.ControladorEventosAdmin import ControladorEventosAdmin
-        vista = EventosAdmin()
-        self._controladores["eventos_admin"] = ControladorEventosAdmin(vista, self.correo_usuario)
+        from src.vista.EventoAdmin import EventoAdmin
+        from src.controlador.ControladorEventoAdmin import ControladorEventoAdmin
+        vista = EventoAdmin()
+        self._controladores["eventos_admin"] = ControladorEventoAdmin(vista, self.correo_usuario)
         vista.show()
         self._vista.close()
-        '''
 
     def abrir_gestion(self):
         from src.vista.GestionAdmin import GestionAdmin
