@@ -1,4 +1,5 @@
 from src.modelo.conexion.Conexion import Conexion
+from src.modelo.vo.EventoVO import EventoVO
 
 class EventoDAO:
     def __init__(self):
@@ -7,8 +8,8 @@ class EventoDAO:
 
     def insertar_evento(self, evento):
         sql = """
-        INSERT INTO evento ( nombre, descripcion, fecha, hora, ubicacion, aforoMax, correo_admin)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO evento (nombre, descripcion, fecha, hora, ubicacion, aforoMax, aforoActual, correo_admin)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
         self.cursor.execute(sql, (
             evento.nombre,
@@ -17,6 +18,59 @@ class EventoDAO:
             evento.hora,
             evento.ubicacion,
             evento.aforoMax,
+            0,  # aforoActual empieza en 0
             evento.correo_admin
         ))
-        #self.conn.getConexion().commit()
+        
+
+    def obtener_todos_eventos(self):
+        sql = "SELECT idEve, nombre, descripcion, fecha, hora, ubicacion, aforoMax, aforoActual, correo_admin FROM evento"
+        self.cursor.execute(sql)
+        resultados = self.cursor.fetchall()
+
+        eventos = []
+        for fila in resultados:
+            evento = EventoVO(
+                idEve=fila[0],
+                nombre=fila[1],
+                descripcion=fila[2],
+                fecha=fila[3],
+                hora=fila[4],
+                ubicacion=fila[5],
+                aforoMax=fila[6],
+                aforoActual=fila[7],
+                correo_admin=fila[8]
+            )
+            eventos.append(evento)
+        return eventos
+    
+    def actualizar_aforo(self, id_evento, nuevo_aforo):
+        try:
+            sql = "UPDATE evento SET aforoActual = ? WHERE idEve = ?"
+            self.cursor.execute(sql, (nuevo_aforo, id_evento))
+            
+            return True
+        except Exception as e:
+            print(f"Error actualizando aforo: {e}")
+            return False
+
+
+
+"""
+    def apuntar_usuario(self, id_evento, correo_usuario=None):
+        sql_check = "SELECT aforoMax, aforoActual FROM evento WHERE idEvento = ?"
+        self.cursor.execute(sql_check, (id_evento,))
+        fila = self.cursor.fetchone()
+
+        if not fila:
+            return False  # No existe el evento
+
+        aforoMax, aforoActual = fila
+        if aforoActual >= aforoMax:
+            return False  # Aforo completo
+
+        sql_update = "UPDATE evento SET aforoActual = aforoActual + 1 WHERE idEvento = ?"
+        self.cursor.execute(sql_update, (id_evento,))
+        
+        return True
+"""

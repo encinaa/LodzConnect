@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSignal
 Form, _ = uic.loadUiType("./src/vista/Ui/Eventos.ui")
 
 class Eventos(VistaNavegable, Form):
-    actualizar_publicaciones_clicked = pyqtSignal()
+    actualizar_eventos_clicked = pyqtSignal()
 
 
     def __init__(self):
@@ -15,7 +15,3 @@ class Eventos(VistaNavegable, Form):
         self.setupUi(self)
         self.conectar_botones_navegacion()
 
-
-        boton_actualizar = self.findChild(QPushButton, "BotonActualizar")
-        if boton_actualizar:
-            boton_actualizar.clicked.connect(self.actualizar_publicaciones_clicked)

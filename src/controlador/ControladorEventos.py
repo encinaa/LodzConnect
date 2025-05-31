@@ -9,7 +9,6 @@ class ControladorEventos(ControladorBaseNavegable):
         self.evento_dao = EventoDAO()
         self.configurar_layout_eventos()
         self.mostrar_eventos()
-        self._vista.actualizar_eventos_clicked.connect(self.mostrar_eventos)
 
     def configurar_layout_eventos(self):
         contenedor = self._vista.findChild(QWidget, "contenedorEventos")
@@ -22,14 +21,11 @@ class ControladorEventos(ControladorBaseNavegable):
     def mostrar_eventos(self):
         eventos = self.evento_dao.obtener_todos_eventos()
         contenedor = self._vista.findChild(QWidget, "contenedorEventos")
-        if contenedor is None:
-            print("No se encontró el widget 'contenedorEventos'")
+        if contenedor is None or contenedor.layout() is None:
+            print("Error: No se encontró el contenedor de eventos o no tiene layout.")
             return
 
         layout = contenedor.layout()
-        if layout is None:
-            print("El widget 'contenedorEventos' no tiene layout")
-            return
 
         # limpiar
         while layout.count():
@@ -49,7 +45,7 @@ class ControladorEventos(ControladorBaseNavegable):
 
         fila_superior = QHBoxLayout()
 
-        label_nombre = QLabel(f"🎉 {evento.nombre}")
+        label_nombre = QLabel(f"🎊 {evento.nombre}")
         label_nombre.setStyleSheet("font-weight: bold; font-size: 16px;")
 
         label_fecha = QLabel(f"📅 {evento.fecha} ⏰ {evento.hora}")
@@ -63,11 +59,33 @@ class ControladorEventos(ControladorBaseNavegable):
         label_desc.setWordWrap(True)
 
         label_ubicacion = QLabel(f"📍 {evento.ubicacion}")
-        label_aforo = QLabel(f"👥 Aforo máximo: {evento.aforoMax}")
+        label_aforo = QLabel(f"👥 Aforo: {evento.aforoActual}/{evento.aforoMax}")
 
         boton_apuntarse = QPushButton("✅ Apuntarse")
         boton_apuntarse.setCursor(Qt.PointingHandCursor)
-        boton_apuntarse.clicked.connect(lambda _, e=evento: self.apuntarse_evento(e))
+
+        def marcar_interes():
+            if evento.aforoActual < evento.aforoMax:
+                nuevo_aforo = evento.aforoActual + 1
+                exito = self.evento_dao.actualizar_aforo(evento.idEve, nuevo_aforo)
+                if exito:
+                    label_aforo.setText(f"👥 Aforo: {nuevo_aforo}/{evento.aforoMax}")
+                    evento.aforoActual = nuevo_aforo
+
+                    # Cambios visuales del botón
+                    boton_apuntarse.setText("✔️ Marcado")
+                    boton_apuntarse.setStyleSheet("""
+                        background-color: #a5d6a7;
+                        color: #1b5e20;
+                        font-weight: bold;
+                    """)
+                    boton_apuntarse.setEnabled(False)
+                else:
+                    QMessageBox.warning(self._vista, "Error", "No se pudo actualizar el aforo.")
+            else:
+                QMessageBox.information(self._vista, "Aforo completo", "El evento ya ha alcanzado el aforo máximo.")
+
+        boton_apuntarse.clicked.connect(marcar_interes)
 
         layout_general.addLayout(fila_superior)
         layout_general.addWidget(label_desc)
@@ -76,18 +94,13 @@ class ControladorEventos(ControladorBaseNavegable):
         layout_general.addWidget(boton_apuntarse)
 
         widget.setStyleSheet("""
-            background-color: #f1f8ff;
+            background-color: #388e3c;
+            color: white;
             border: 1px solid #90caf9;
             border-radius: 8px;
             padding: 10px;
             margin-bottom: 10px;
         """)
 
-        return widget
 
-    def apuntarse_evento(self, evento):
-        # Lógica para apuntarse (esto se adaptaría a tu DAO o sistema)
-        if self.evento_dao.apuntar_usuario(evento.idEvento, self.correo_usuario):
-            QMessageBox.information(self._vista, "Apuntado", "Te has apuntado al evento con éxito.")
-        else:
-            QMessageBox.warning(self._vista, "Error", "Ya estás apuntado o ha ocurrido un error.")
+        return widget
