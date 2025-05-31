@@ -13,16 +13,22 @@ class ControladorPopupPublicacion:
 
     def publicar(self):
         texto = self.vista.texto.toPlainText().strip()
-        if texto:
-            nueva_publicacion = PublicacionVO(
-                idPublic=None, 
-                fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                listaEtiquetados=[], 
-                cuentaOrigen=self.correo_usuario,
-                descripcion=texto    
-            )
-            self.dao.insertar_publicacion(nueva_publicacion)
-            QMessageBox.information(self.vista, "Publicado", "Tu publicación se ha guardado.")
-            self.vista.accept()
-        else:
+
+        if not texto:
             QMessageBox.warning(self.vista, "Error", "El texto no puede estar vacío.")
+            return
+
+        if len(texto) > 500:
+            QMessageBox.warning(self.vista, "Error", "La publicación no puede exceder los 500 caracteres.")
+            return
+
+        nueva_publicacion = PublicacionVO(
+            idPublic=None, 
+            fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            listaEtiquetados=[], 
+            cuentaOrigen=self.correo_usuario,
+            descripcion=texto    
+        )
+        self.dao.insertar_publicacion(nueva_publicacion)
+        QMessageBox.information(self.vista, "Publicado", "Tu publicación se ha guardado.")
+        self.vista.accept()

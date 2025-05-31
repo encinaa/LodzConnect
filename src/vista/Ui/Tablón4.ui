@@ -26,7 +26,7 @@
         background-color: #2e7d32;
         color: white;
         border-radius: 8px;
-        font: bold 10pt "Segoe UI";
+        font: bold 10pt &quot;Segoe UI&quot;;
         padding: 8px;
     }
     QPushButton:hover {
@@ -123,7 +123,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 18pt "Century"; color:#388e3c;</string>
+     <string notr="true">font: 18pt &quot;Century&quot;; color:#388e3c;</string>
     </property>
     <property name="text">
      <string>Tablón</string>
@@ -142,8 +142,38 @@
      <bool>true</bool>
     </property>
     <widget class="QWidget" name="contenedorPublicaciones">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>659</width>
+       <height>479</height>
+      </rect>
+     </property>
      <layout class="QVBoxLayout" name="layoutPublicaciones"/>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="BotonActualizar">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>30</y>
+      <width>41</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+    QPushButton {
+        background-color: #f0f4f1;
+    }
+    QPushButton:hover {
+        background-color: #cccccc;
+    }</string>
+    </property>
+    <property name="text">
+     <string>🔄️</string>
+    </property>
    </widget>
   </widget>
  </widget>

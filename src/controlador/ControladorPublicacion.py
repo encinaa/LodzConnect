@@ -1,3 +1,5 @@
+
+"""
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
 from src.vista.PopupPublicacion import PopupPublicacion
 
@@ -32,3 +34,4 @@ class ControladorPublicacion:
         if self.vista_anterior:
             self.vista_anterior.show()
         self._vista.close()
+"""
