@@ -1,7 +1,9 @@
 import jaydebeapi
+from src.utils.singleton import singleton
 
+@singleton #utils
 class Conexion:
-    def __init__(self, host='localhost', database='UniConecta', user='root', password='Ponferrada.55'):
+    def __init__(self, host='localhost', database='UniConecta', user='root', password='Tib1623iya.'):
         self._host = host
         self._database = database
         self._user = user
@@ -39,3 +41,4 @@ class Conexion:
             print("Error cerrando conexión:", e)
 
 u = Conexion()
+
