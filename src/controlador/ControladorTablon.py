@@ -1,11 +1,12 @@
 from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
-from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
 
 class ControladorTablon(ControladorBaseNavegable):
     def __init__(self, vista, correo_usuario):
         super().__init__(vista, correo_usuario)
+        #self._correo_usuario = correo_usuario #tengo q renombrarlo pq me daba error
         self.publicacion_dao = PublicacionDAO()
         self.configurar_layout_publicaciones()
         self.mostrar_publicaciones()
@@ -24,8 +25,7 @@ class ControladorTablon(ControladorBaseNavegable):
             layout.setSpacing(10)
             contenedor.setLayout(layout)
             print("Layout asignado manualmente a 'contenedorPublicaciones'")
-        else:
-            print("Layout ya existente en 'contenedorPublicaciones'")
+        
 
     def mostrar_publicaciones(self):
         publicaciones = self.publicacion_dao.obtener_todas_publicaciones()
@@ -56,19 +56,39 @@ class ControladorTablon(ControladorBaseNavegable):
         layout_general = QVBoxLayout()
         widget.setLayout(layout_general)
 
-        # cuentaOrigen (izquierda) + fecha (derecha)
+        # Fila superior con: (si es mío) botón eliminar + cuentaOrigen + fecha
         fila_superior = QHBoxLayout()
-        label_origen = QLabel(f"👤 {publicacion.cuentaOrigen}")
+
+        # Si soy el autor, muestro el botón "x"
+        if publicacion.cuentaOrigen == self.correo_usuario:
+            boton_eliminar = QPushButton("❌")
+            boton_eliminar.setFixedSize(40, 40)
+            boton_eliminar.setStyleSheet("""
+                color: red; 
+                border: none; 
+                font-weight: bold; 
+                padding-bottom: 3px;
+            """)
+            boton_eliminar.setCursor(Qt.PointingHandCursor)
+            boton_eliminar.clicked.connect(lambda _, pub=publicacion: self.confirmar_eliminacion(pub))
+            fila_superior.addWidget(boton_eliminar)
+        else:
+            fila_superior.addSpacing(30)# deja espacio para alinear visualmente
+
+        boton_origen = QPushButton(f"👤 {publicacion.cuentaOrigen}")
+        boton_origen.setStyleSheet("border: none; color: #007acc; text-align: left;")
+        boton_origen.setCursor(Qt.PointingHandCursor)
+        # Aún no usamos este botón, pero lo puedes conectar luego a abrir_perfil_usuario()
+
         label_fecha = QLabel(f"📅 {publicacion.fecha}")
         label_fecha.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        fila_superior.addWidget(label_origen)
-        fila_superior.addStretch()  # empuja la fecha a la derecha
+        fila_superior.addWidget(boton_origen)
+        fila_superior.addStretch()
         fila_superior.addWidget(label_fecha)
 
-        # el texto
         label_desc = QLabel(f"📝 {publicacion.descripcion}")
-        label_desc.setWordWrap(True)  # ajusta el texto si es largo
+        label_desc.setWordWrap(True)
 
         layout_general.addLayout(fila_superior)
         layout_general.addWidget(label_desc)
@@ -81,3 +101,33 @@ class ControladorTablon(ControladorBaseNavegable):
             margin-bottom: 10px;
         """)
         return widget
+
+    #popup para confirmar eliminacion
+    def confirmar_eliminacion(self, publicacion):
+        respuesta = QMessageBox.question(
+            self._vista,
+            "Eliminar publicación",
+            "¿Estás seguro de que deseas eliminar esta publicación?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if respuesta == QMessageBox.Yes:
+            self.publicacion_dao.eliminar_publicacion(publicacion.idPublic)
+            self.mostrar_publicaciones()
+            QMessageBox.information(
+                self._vista,
+                "Eliminado",
+                "La publicación ha sido eliminada correctamente."
+            )
+
+
+"""
+    def abrir_perfil_usuario(self, correo):
+        from src.vista.MiPerfil import MiPerfil  # importa la vista
+        from src.controlador.ControladorMiPerfil import ControladorMiPerfil  # importa el controlador
+
+        vista_perfil = MiPerfil()
+        controlador_perfil = ControladorMiPerfil(vista_perfil, correo)
+
+        self.navegar_a(vista_perfil)
+
+"""

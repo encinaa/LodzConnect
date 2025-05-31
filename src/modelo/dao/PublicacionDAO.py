@@ -33,3 +33,9 @@ class PublicacionDAO:
             publicaciones.append(publicacion)
 
         return publicaciones
+    
+    def eliminar_publicacion(self, id_publicacion):
+        sql = "DELETE FROM Publicacion WHERE idPublic = ?"
+        self.cursor.execute(sql, (id_publicacion,))
+        #self.conn.getConexion().commit()
+

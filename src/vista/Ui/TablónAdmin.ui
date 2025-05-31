@@ -145,7 +145,7 @@ color: #388e3c;</string>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
+    <widget class="QWidget" name="contenedorPublicaciones">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -154,7 +154,30 @@ color: #388e3c;</string>
        <height>479</height>
       </rect>
      </property>
+     <layout class="QVBoxLayout" name="layoutPublicaciones"/>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="BotonActualizar">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>30</y>
+      <width>41</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+    QPushButton {
+        background-color: #f0f4f1;
+    }
+    QPushButton:hover {
+        background-color: #cccccc;
+    }</string>
+    </property>
+    <property name="text">
+     <string>🔄️</string>
+    </property>
    </widget>
   </widget>
  </widget>
