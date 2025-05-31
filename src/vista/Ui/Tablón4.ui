@@ -123,7 +123,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 18pt "Century"; color:rgb(36, 185, 208);</string>
+     <string notr="true">font: 18pt "Century"; color:#388e3c;</string>
     </property>
     <property name="text">
      <string>Tablón</string>
