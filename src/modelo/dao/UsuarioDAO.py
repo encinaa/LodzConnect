@@ -1,6 +1,8 @@
 from src.modelo.conexion.Conexion import Conexion
 from src.modelo.vo.UsuarioVO import UsuarioVO
+from src.utils.singleton import singleton
 
+@singleton #utils
 class UsuarioDAO:
     def __init__(self):
         self.conn = Conexion()  # Conexión a la base de datos
