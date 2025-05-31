@@ -34,6 +34,7 @@ class EventoLogica:
             hora=hora.toString("HH:mm:ss"),
             ubicacion=ubicacion.strip(),
             aforoMax=aforo,
+            aforoActual=0,
             correo_admin=correo_admin.strip()
         )
 

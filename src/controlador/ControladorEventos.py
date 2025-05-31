@@ -93,6 +93,8 @@ class ControladorEventos(ControladorBaseNavegable):
         layout_general.addWidget(label_aforo)
         layout_general.addWidget(boton_apuntarse)
 
+        #layout_general.setSizeConstraint(QVBoxLayout.SetFixedSize)
+        widget.setMaximumWidth(620) 
         widget.setStyleSheet("""
             background-color: #388e3c;
             color: white;
