@@ -14,6 +14,12 @@ class EventoLogica:
         if not isinstance(fecha, QDate) or not fecha.isValid():
             return False, "La fecha no es válida."
 
+        # Validación de fecha pasada
+        hoy = QDate.currentDate()
+        if fecha < hoy:
+            return False, "La fecha del evento no puede ser anterior a hoy."
+
+
         if not isinstance(hora, QTime) or not hora.isValid():
             return False, "La hora no es válida."
 
