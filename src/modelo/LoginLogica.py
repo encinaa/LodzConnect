@@ -1,7 +1,9 @@
 
 import re
+from src.utils.singleton import singleton
 from src.modelo.vo.LoginVO import LoginVO
 
+@singleton #utils
 class LoginLogica:
     def __init__(self, usuario_dao):
         self.usuario_dao = usuario_dao
