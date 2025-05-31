@@ -7,11 +7,10 @@ class EventoDAO:
 
     def insertar_evento(self, evento):
         sql = """
-        INSERT INTO evento (idEve, nombre, descripcion, fecha, hora, ubicacion, aforoMax, correo_admin)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO evento ( nombre, descripcion, fecha, hora, ubicacion, aforoMax, correo_admin)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         """
         self.cursor.execute(sql, (
-            evento.idEve,
             evento.nombre,
             evento.descripcion,
             evento.fecha,

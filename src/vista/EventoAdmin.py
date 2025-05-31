@@ -14,19 +14,15 @@ class EventoAdmin(VistaNavegableAdmin, Form):
         self.conectar_botones_navegacion()
 
         # Conectar el click del botón a emitir la señal
-        self.BotonAnadirEvento.clicked.connect(self.anadir_evento_clicked.emit)
-
-    # Método para que el controlador conecte su slot a la señal
-    def conectar_boton_anadir_evento(self, slot):
-        self.anadir_evento_clicked.connect(slot)
+        self.BotonAnadirEvento.clicked.connect(self.anadir_evento_clicked)
 
     # Métodos para obtener datos del formulario
     def obtener_datos_evento(self):
-        nombre = self.NombreEvento.text()
+        nombre = self.NombreEvento.toPlainText()
         descripcion = self.DescripcionEvento.toPlainText()
         fecha = self.FechaEvento.date()
         hora = self.HoraEvento.time()
-        ubicacion = self.UbicacionEvento.text()
+        ubicacion = self.UbicacionEvento.toPlainText()
         aforo = self.AforoMax.value()
         correo_admin = self.CorreoAdmin.text() if hasattr(self, "CorreoAdmin") else ""
         return nombre, descripcion, fecha, hora, ubicacion, aforo, correo_admin
