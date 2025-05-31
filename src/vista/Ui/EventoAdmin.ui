@@ -173,7 +173,7 @@ color: #388e3c;</string>
      </datetime>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextEdit" name="UbicacionEvento">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -186,7 +186,7 @@ color: #388e3c;</string>
      <string>Ubicación</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBox">
+   <widget class="QSpinBox" name="AforoMax">
     <property name="geometry">
      <rect>
       <x>220</x>

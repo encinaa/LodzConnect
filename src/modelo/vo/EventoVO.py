@@ -8,4 +8,4 @@ class EventoVO:
         self.ubicacion = ubicacion
         self.aforoMax = aforoMax
         self.correo_admin = correo_admin
-        #self.permisos = permisos
+    

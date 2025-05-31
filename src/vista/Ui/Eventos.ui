@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Mi Perfil</string>
+   <string>Panel Principal</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../../recursos.qrc">
@@ -35,7 +35,7 @@
    </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QFrame" name="sidebar">
+   <widget class="QFrame" name="MenuLateral">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -54,9 +54,7 @@
      <item>
       <widget class="QPushButton" name="BotonTablon">
        <property name="styleSheet">
-        <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
+        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
         <string>Tablón</string>
@@ -66,9 +64,7 @@
      <item>
       <widget class="QPushButton" name="BotonMiPerfil">
        <property name="styleSheet">
-        <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
+        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
         <string>Mi Perfil</string>
@@ -78,9 +74,7 @@
      <item>
       <widget class="QPushButton" name="BotonEventos">
        <property name="styleSheet">
-        <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
+        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
         <string>Eventos</string>
@@ -90,10 +84,7 @@
      <item>
       <widget class="QPushButton" name="BotonTest">
        <property name="styleSheet">
-        <string notr="true">
-      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
+        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
         <string>Test</string>
@@ -103,9 +94,7 @@
      <item>
       <widget class="QPushButton" name="BotonPublicacion">
        <property name="styleSheet">
-        <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
+        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
         <string>Añadir publicación</string>
@@ -115,9 +104,7 @@
      <item>
       <widget class="QPushButton" name="BotonCerrarSesion">
        <property name="styleSheet">
-        <string notr="true">      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
+        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
         <string>Cerrar sesión</string>
@@ -129,17 +116,63 @@
    <widget class="QLabel" name="mainLabel">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>220</x>
       <y>30</y>
       <width>600</width>
       <height>40</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 18pt &quot;Century&quot;; color: #388e3c;</string>
+     <string notr="true">font: 18pt &quot;Century&quot;; color:#388e3c;</string>
     </property>
     <property name="text">
      <string>Eventos</string>
+    </property>
+   </widget>
+   <widget class="QScrollArea" name="scrollAreaEventos">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>90</y>
+      <width>661</width>
+      <height>481</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="contenedorEventos">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>659</width>
+       <height>479</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="layoutPublicaciones"/>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="BotonActualizar">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>30</y>
+      <width>41</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+    QPushButton {
+        background-color: #f0f4f1;
+    }
+    QPushButton:hover {
+        background-color: #cccccc;
+    }</string>
+    </property>
+    <property name="text">
+     <string>🔄️</string>
     </property>
    </widget>
   </widget>
