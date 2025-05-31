@@ -1,6 +1,6 @@
-class PerfilVO():
-    def __init__(self, idPerf, descripcion, fechaNacimiento, listaActividades):
+class PerfilVO:
+    def __init__(self, idPerf, descripcion, listaActividades, correo):
         self.idPerf = idPerf
         self.descripcion = descripcion
-        self.fechaNacimiento = fechaNacimiento
         self.listaActividades = listaActividades
+        self.correo = correo

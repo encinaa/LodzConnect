@@ -1,40 +1,53 @@
-# AUN NO SE SI FUNCIONA
+from src.modelo.dao.EstudianteDAO import EstudianteDAO
+from src.modelo.dao.PerfilDAO import PerfilDAO
+from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
+from PyQt5.QtWidgets import QMessageBox
 
-#--------NO TOCAR------------------------
-
-class ControladorEditarPerfil:
-    def __init__(self, vista, correo_usuario):
+class ControladorEditarPerfil(ControladorBaseNavegable):
+    def __init__(self, vista, usuario_vo):
+        super().__init__(vista, usuario_vo.correo)
         self._vista = vista
-        self.correo_usuario = correo_usuario
-        self.vista_anterior = None
+        self.usuario_vo = usuario_vo
+        self.estudiante_dao = EstudianteDAO()
+        self.perfil_dao = PerfilDAO()
 
-        # Conectar la señal del botón guardar
         self._vista.guardar_clicked.connect(self.guardar_perfil)
 
-        # Simulación: cargar datos actuales (puedes sustituirlo por lógica real con DAO)
-        self._vista.EditarUsuario.setText("Aroa García")
-        self._vista.EditarEdad.setValue(22)
-        self._vista.EditarDescripcion.setPlainText("Estudiante de Ingeniería de Software")
-        self._vista.EditarActividades.setPlainText("• Participar en eventos\n• Realizar publicaciones")
+        # Cargar datos del estudiante
+        datos_estudiante = self.estudiante_dao.obtener_datos_estudiante(usuario_vo.correo)
+        if datos_estudiante:
+            nombre, edad = datos_estudiante
+            self._vista.EditarUsuario.setText(nombre)
+            self._vista.EditarEdad.setValue(int(edad))
+        else:
+            self._vista.EditarUsuario.setText("Desconocido")
+            self._vista.EditarEdad.setValue(0)
 
-    def set_vista_anterior(self, vista_anterior):
-        self.vista_anterior = vista_anterior
+        # Cargar perfil
+        perfil = self.perfil_dao.obtener_datos_perfil(usuario_vo.correo)
+        if perfil:
+            descripcion, actividades, _ = perfil
+            self._vista.EditarDescripcion.setPlainText(descripcion or "")
+            self._vista.EditarActividades.setPlainText(actividades or "")
 
     def guardar_perfil(self):
-        # Obtener los datos desde la vista
-        nombre = self._vista.EditarUsuario.text()
-        edad = self._vista.EditarEdad.value()
-        descripcion = self._vista.EditarDescripcion.toPlainText()
-        actividades = self._vista.EditarActividades.toPlainText()
+        nuevo_usuario = self._vista.EditarUsuario.text()
+        nueva_edad = self._vista.EditarEdad.value()
+        nueva_descripcion = self._vista.EditarDescripcion.toPlainText()
+        nuevas_actividades = self._vista.EditarActividades.toPlainText()
 
-        # Simular guardar (en una app real: usar UsuarioDAO aquí)
-        print("Perfil guardado:")
-        print(f"Nombre: {nombre}")
-        print(f"Edad: {edad}")
-        print(f"Descripción: {descripcion}")
-        print(f"Actividades: {actividades}")
+        if not nuevo_usuario.strip():
+            QMessageBox.warning(self._vista, "Error", "El nombre de usuario no puede estar vacío.")
+            return
 
-        # Volver a la vista anterior (MiPerfil)
-        if self.vista_anterior:
-            self.vista_anterior.show()
+        self.estudiante_dao.actualizar_estudiante(self.usuario_vo.correo, nuevo_usuario, nueva_edad)
+        self.perfil_dao.actualizar_perfil(self.usuario_vo.correo, nueva_descripcion, nuevas_actividades)
+
+        # Volver a MiPerfil
+        from src.vista.MiPerfil import MiPerfil
+        from src.controlador.ControladorMiPerfil import ControladorMiPerfil
+
+        self.vista_mi_perfil = MiPerfil()
+        self.controlador_mi_perfil = ControladorMiPerfil(self.vista_mi_perfil, self.usuario_vo.correo)
         self._vista.close()
+        self.vista_mi_perfil.show()

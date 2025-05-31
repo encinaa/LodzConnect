@@ -63,16 +63,3 @@ class UsuarioDAO:
             return None
         finally:
             cursor.close()
-    
-    def obtener_datos_estudiante(self, correo):
-        cursor = self.conn.getCursor()
-        try:
-            cursor.execute("SELECT nombre, edad FROM Estudiantes WHERE correo = ?", (correo,))
-            return cursor.fetchone()  # Devuelve (nombre, edad)
-        except Exception as e:
-            print(f"Error al obtener datos del estudiante: {e}")
-            return None
-        finally:
-            cursor.close()
-
-

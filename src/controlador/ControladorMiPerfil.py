@@ -1,29 +1,31 @@
 from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
-from src.modelo.dao.UsuarioDAO import UsuarioDAO  # Acceso a datos
-from src.modelo.vo.UsuarioVO import UsuarioVO  # Objeto de valor
+from src.modelo.dao.UsuarioDAO import UsuarioDAO
+from src.modelo.dao.EstudianteDAO import EstudianteDAO
+from src.modelo.dao.PerfilDAO import PerfilDAO
+from src.modelo.vo.UsuarioVO import UsuarioVO
+
 
 class ControladorMiPerfil(ControladorBaseNavegable):
     def __init__(self, vista, correo_usuario):
         super().__init__(vista, correo_usuario)
         self.correo_usuario = correo_usuario
-        self.usuario_dao = UsuarioDAO()  # Instancia del DAO
-        self.usuario_vo = None  # Objeto de valor del usuario
-        
+        self.usuario_dao = UsuarioDAO()
+        self.estudiante_dao = EstudianteDAO()
+        self.perfil_dao = PerfilDAO()
+        self.usuario_vo = None
+
         # Conectar señales
         self._vista.editar_perfil_clicked.connect(self.editar_perfil)
         self.cargar_datos_perfil()
 
     def cargar_datos_perfil(self):
-        """Carga los datos del usuario usando el DAO"""
+        """Carga los datos del usuario usando los DAOs"""
         try:
-            # Obtener el VO del usuario desde la tabla Usuario
             self.usuario_vo = self.usuario_dao.obtener_por_correo(self.correo_usuario)
 
             if self.usuario_vo:
-                #self._vista.label_correo.setText(self.usuario_vo.correo)
-
-                # Obtener nombre y edad desde la tabla Estudiantes
-                datos_estudiante = self.usuario_dao.obtener_datos_estudiante(self.correo_usuario)
+                # Obtener nombre y edad desde Estudiantes
+                datos_estudiante = self.estudiante_dao.obtener_datos_estudiante(self.correo_usuario)
                 if datos_estudiante:
                     nombre, edad = datos_estudiante
                     self._vista.label_Usuario.setText(nombre)
@@ -31,24 +33,31 @@ class ControladorMiPerfil(ControladorBaseNavegable):
                 else:
                     self._vista.label_Usuario.setText("Desconocido")
                     self._vista.label_Edad.setText("-")
+
+                # Obtener descripción y actividades desde perfil
+                datos_perfil = self.perfil_dao.obtener_datos_perfil(self.correo_usuario)
+                if datos_perfil:
+                    descripcion, lista_actividades, _ = datos_perfil
+                    self._vista.label_Descripcion.setText(descripcion or "Sin descripción")
+                    self._vista.ListaActividades.setText(lista_actividades or "Sin actividades")
+                else:
+                    self._vista.label_Descripcion.setText("Sin descripción")
+                    self._vista.ListaActividades.setText("Sin actividades")
+
         except Exception as e:
             print(f"Error al cargar perfil: {e}")
-            # QMessageBox de error si quieres
 
     def editar_perfil(self):
         """Maneja la navegación a editar perfil"""
         from src.controlador.ControladorEditarPerfil import ControladorEditarPerfil
         from src.vista.EditarPerfil import EditarPerfil
-        
-        vista_editar = EditarPerfil()
-        controlador_editar = ControladorEditarPerfil(
-            vista_editar, 
-            self.usuario_vo.correo 
+
+        self.vista_editar = EditarPerfil()
+        self.controlador_editar = ControladorEditarPerfil(
+            self.vista_editar,
+            self.usuario_vo
         )
-        
-        vista_editar.setWindowModality(2)  # Modal
-        vista_editar.show()
+
+        self.vista_editar.setWindowModality(2)
+        self.vista_editar.show()
         self._vista.close()
-      
-        '''if hasattr(vista_editar, 'perfil_actualizado'):
-            vista_editar.perfil_actualizado.connect(self.cargar_datos_perfil)'''
