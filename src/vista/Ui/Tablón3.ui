@@ -144,7 +144,7 @@ color: #388e3c;</string>
      <string>Tablón</string>
     </property>
    </widget>
-   <widget class="QScrollArea" name="scrollArea">
+   <widget class="QScrollArea" name="scrollAreaPublicaciones">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -156,7 +156,7 @@ color: #388e3c;</string>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
+    <widget class="QWidget" name="contenedorPublicaciones">
      <property name="geometry">
       <rect>
        <x>0</x>
