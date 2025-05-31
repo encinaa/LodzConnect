@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QPushButton, QLabel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import uic
 from src.vista.VistaNavegable import VistaNavegable
@@ -17,3 +17,4 @@ class MiPerfil(VistaNavegable, Form):
         boton_editar = self.findChild(QPushButton, "BotonEditarPerfil")
         if boton_editar:
             boton_editar.clicked.connect(self.editar_perfil_clicked)
+       
