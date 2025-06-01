@@ -64,37 +64,47 @@ class ControladorEventos(ControladorBaseNavegable):
         boton_apuntarse = QPushButton("✅ Apuntarse")
         boton_apuntarse.setCursor(Qt.PointingHandCursor)
 
+        boton_desapuntarse = QPushButton("❌ Desapuntarse")
+        boton_desapuntarse.setCursor(Qt.PointingHandCursor)
+
         def marcar_interes():
             if evento.aforoActual < evento.aforoMax:
                 nuevo_aforo = evento.aforoActual + 1
                 exito = self.evento_dao.actualizar_aforo(evento.idEve, nuevo_aforo)
                 if exito:
-                    label_aforo.setText(f"👥 Aforo: {nuevo_aforo}/{evento.aforoMax}")
                     evento.aforoActual = nuevo_aforo
-
-                    # Cambios visuales del botón
-                    boton_apuntarse.setText("✔️ Marcado")
-                    boton_apuntarse.setStyleSheet("""
-                        background-color: #a5d6a7;
-                        color: #1b5e20;
-                        font-weight: bold;
-                    """)
-                    boton_apuntarse.setEnabled(False)
+                    label_aforo.setText(f"👥 Aforo: {nuevo_aforo}/{evento.aforoMax}")
                 else:
                     QMessageBox.warning(self._vista, "Error", "No se pudo actualizar el aforo.")
             else:
                 QMessageBox.information(self._vista, "Aforo completo", "El evento ya ha alcanzado el aforo máximo.")
 
+        def desapuntarse():
+            if evento.aforoActual > 0:
+                nuevo_aforo = evento.aforoActual - 1
+                exito = self.evento_dao.actualizar_aforo(evento.idEve, nuevo_aforo)
+                if exito:
+                    evento.aforoActual = nuevo_aforo
+                    label_aforo.setText(f"👥 Aforo: {nuevo_aforo}/{evento.aforoMax}")
+                else:
+                    QMessageBox.warning(self._vista, "Error", "No se pudo actualizar el aforo.")
+            else:
+                QMessageBox.information(self._vista, "Aforo mínimo", "No hay nadie apuntado al evento.")
+
         boton_apuntarse.clicked.connect(marcar_interes)
+        boton_desapuntarse.clicked.connect(desapuntarse)
+
+        layout_botones = QHBoxLayout()
+        layout_botones.addWidget(boton_apuntarse)
+        layout_botones.addWidget(boton_desapuntarse)
 
         layout_general.addLayout(fila_superior)
         layout_general.addWidget(label_desc)
         layout_general.addWidget(label_ubicacion)
         layout_general.addWidget(label_aforo)
-        layout_general.addWidget(boton_apuntarse)
+        layout_general.addLayout(layout_botones)
 
-        #layout_general.setSizeConstraint(QVBoxLayout.SetFixedSize)
-        widget.setMaximumWidth(620) 
+        widget.setMaximumWidth(620)
         widget.setStyleSheet("""
             background-color: #388e3c;
             color: white;
@@ -103,6 +113,5 @@ class ControladorEventos(ControladorBaseNavegable):
             padding: 10px;
             margin-bottom: 10px;
         """)
-
 
         return widget

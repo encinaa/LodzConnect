@@ -22,19 +22,8 @@ class UsuarioDAO:
         cursor = self.conn.getCursor()
         try:
             cursor.execute("INSERT INTO Usuario (correo, contraseña) VALUES (?, ?)", (correo, contraseña))
-            self.conn.conexion.commit()
         except Exception as e:
             print("Error insertando usuario:", e)
-        finally:
-            cursor.close()
-
-    def insertar_admin(self, correo, permisos="Y"):
-        cursor = self.conn.getCursor()
-        try:
-            cursor.execute("INSERT INTO Administrador (correo, permisos) VALUES (?, ?)", (correo, permisos))
-            self.conn.conexion.commit()
-        except Exception as e:
-            print("Error insertando admin:", e)
         finally:
             cursor.close()
 
@@ -63,3 +52,12 @@ class UsuarioDAO:
             return None
         finally:
             cursor.close()
+
+    def eliminar_usuario(self, correo):
+        try:
+            cursor = self.conn.getCursor()
+            cursor.execute("DELETE FROM Usuario WHERE correo = ?", (correo,))
+            cursor.close()
+        except Exception as e:
+            print("Error eliminando usuario:", e)
+

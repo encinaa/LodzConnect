@@ -8,10 +8,10 @@ class EstudianteDAO:
     def insertar_estudiante(self, estudiante):
         sql = "INSERT INTO Usuario (correo, contraseña) VALUES (?, ?)"
         self.cursor.execute(sql, (estudiante.correo, estudiante.contraseña))
-        #self.cursor.commit()
+      
         sql = "INSERT INTO Estudiantes (correo, nombre, edad) VALUES (?, ?, ?)"
         self.cursor.execute(sql, (estudiante.correo, estudiante.nombre, estudiante.edad))
-        #self.cursor.commit()
+ 
     
     def obtener_datos_estudiante(self, correo):
         cursor = self.conn.getCursor()
@@ -32,3 +32,14 @@ class EstudianteDAO:
             print(f"Error al actualizar estudiante: {e}")
         finally:
             cursor.close()
+
+    def eliminar_estudiante(self, correo):
+        try:
+            cursor = self.conn.getCursor()
+            cursor.execute("DELETE FROM Estudiantes WHERE correo = ?", (correo,))
+            cambios = cursor.rowcount
+            cursor.close()
+            return cambios > 0
+        except Exception as e:
+            print("Error eliminando estudiante:", e)
+            return False
