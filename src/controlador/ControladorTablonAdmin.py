@@ -42,7 +42,7 @@ class ControladorTablonAdmin(ControladorBaseNavegableAdmin):
             print("El widget 'contenedorPublicaciones' no tiene un layout asignado")
             return
 
-        # Limpiar publicaciones anteriores
+        # Limpiar publicaciones anteriores?? me daba error sino no se muy bn
         while layout.count():
             item = layout.takeAt(0)
             widget = item.widget()

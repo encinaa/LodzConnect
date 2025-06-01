@@ -5,7 +5,7 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow 
 from PyQt5 import uic
 from src.vista.Login import Login
-from src.modelo.vo.LoginBBDD import LoginBD
+#from src.modelo.vo.LoginBBDD import LoginBD
 from src.vista.PáginaPrincipal import PáginaPrincipal
 from src.controlador.ControladorPaginaPrincipal import ControladorPaginaPrincipal
 
