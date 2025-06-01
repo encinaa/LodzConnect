@@ -2,6 +2,9 @@ from src.controlador.ControladorBaseNavegableAdmin import ControladorBaseNavegab
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt
+from src.vista.PerfilOtro import PerfilOtro
+from src.controlador.ControladorPerfilOtroAdmin import ControladorPerfilOtroAdmin
+
 
 class ControladorTablonAdmin(ControladorBaseNavegableAdmin):
     def __init__(self, vista, correo_usuario):
@@ -71,14 +74,15 @@ class ControladorTablonAdmin(ControladorBaseNavegableAdmin):
         boton_eliminar.clicked.connect(lambda _, pub=publicacion: self.confirmar_eliminacion(pub))
         fila_superior.addWidget(boton_eliminar)
 
+        # BOTÓN que abre PerfilOtro
         boton_origen = QPushButton(f"👤 {publicacion.cuentaOrigen}")
         boton_origen.setStyleSheet("border: none; color: #007acc; text-align: left;")
         boton_origen.setCursor(Qt.PointingHandCursor)
+        boton_origen.clicked.connect(lambda _, correo=publicacion.cuentaOrigen: self.abrir_perfil_otro(correo))
+        fila_superior.addWidget(boton_origen)
 
         label_fecha = QLabel(f"📅 {publicacion.fecha}")
         label_fecha.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-
-        fila_superior.addWidget(boton_origen)
         fila_superior.addStretch()
         fila_superior.addWidget(label_fecha)
 
@@ -96,8 +100,6 @@ class ControladorTablonAdmin(ControladorBaseNavegableAdmin):
             margin-bottom: 10px;
         """)
         return widget
- 
-
 
 
     #popup para confirmar eliminacion
@@ -117,15 +119,8 @@ class ControladorTablonAdmin(ControladorBaseNavegableAdmin):
                 "La publicación ha sido eliminada correctamente."
             )
 
-
-"""
-    def abrir_perfil_usuario(self, correo):
-        from src.vista.MiPerfil import MiPerfil  # importa la vista
-        from src.controlador.ControladorMiPerfil import ControladorMiPerfil  # importa el controlador
-
-        vista_perfil = MiPerfil()
-        controlador_perfil = ControladorMiPerfil(vista_perfil, correo)
-
-        self.navegar_a(vista_perfil)
-
-"""
+    def abrir_perfil_otro(self, correo):
+        self.vista_otro = PerfilOtro()
+        self.controlador_otro = ControladorPerfilOtroAdmin(self.vista_otro, correo)
+        self.vista_otro.show()
+        self._vista.close()
