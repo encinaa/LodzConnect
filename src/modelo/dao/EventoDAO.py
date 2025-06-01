@@ -55,3 +55,12 @@ class EventoDAO:
             return False
 
 
+    def eliminar_evento(self, id_evento):
+        try:
+            sql = "DELETE FROM evento WHERE idEve = ?"
+            self.cursor.execute(sql, (id_evento,))
+            return True
+        except Exception as e:
+            print(f"Error eliminando evento: {e}")
+            return False
+

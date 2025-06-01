@@ -8,10 +8,10 @@ class ControladorBaseNavegableAdmin(ABC):
         self.correo_usuario = correo_usuario
         self.usuario_dao = UsuarioDAO()
 
-        # Para guardar referencias
+        # Para guardar referencias para poder volver a las vistas sin q se cierren pestañas
         self._controladores = {}
 
-        # Conectar señales de botones del admin
+        # Conecta señales de botones del admin
         self._vista.tablon_clicked.connect(self.abrir_tablon)
         self._vista.eventos_clicked.connect(self.abrir_eventos)
         self._vista.gestion_clicked.connect(self.abrir_gestion)
@@ -44,16 +44,9 @@ class ControladorBaseNavegableAdmin(ABC):
 
 
     def abrir_test(self):
-        #CREO Q ES UN POPUP
-        pass
-        """
-        from src.vista.TestAdmin import TestAdmin
-        from src.controlador.ControladorTestAdmin import ControladorTestAdmin
-        vista = TestAdmin()
-        self._controladores["test_admin"] = ControladorTestAdmin(vista, self.correo_usuario)
-        vista.show()
-        self._vista.close()
-        """
+        from src.vista.CrearTestPopup import CrearTestPopup
+        popup = CrearTestPopup(self.correo_usuario)
+        popup.exec_()
 
     def cerrar_sesion(self):
         from src.vista.PáginaPrincipal import PáginaPrincipal

@@ -259,7 +259,7 @@ color: #388e3c;</string>
      <string>Nombre</string>
     </property>
    </widget>
-   <widget class="QScrollArea" name="scrollAreaEventos_2">
+   <widget class="QScrollArea" name="scrollAreaEventos">
     <property name="geometry">
      <rect>
       <x>480</x>
@@ -271,7 +271,7 @@ color: #388e3c;</string>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
-    <widget class="QWidget" name="contenedorEventos_2">
+    <widget class="QWidget" name="contenedorEventos">
      <property name="geometry">
       <rect>
        <x>0</x>

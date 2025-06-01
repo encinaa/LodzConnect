@@ -12,7 +12,7 @@ class PublicacionDAO:
             publicacion.fecha,
             ",".join(publicacion.listaEtiquetados),
             publicacion.cuentaOrigen,
-            publicacion.descripcion  # ✅ ahora hay 4 valores
+            publicacion.descripcion  
         ))
 
     def obtener_todas_publicaciones(self):
