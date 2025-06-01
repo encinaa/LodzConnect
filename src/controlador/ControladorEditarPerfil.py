@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QMessageBox
 class ControladorEditarPerfil(ControladorBaseNavegable):
     def __init__(self, vista, usuario_vo):
         super().__init__(vista, usuario_vo.correo)
-        self._vista = vista
         self.usuario_vo = usuario_vo
         self.estudiante_dao = EstudianteDAO()
         self.perfil_dao = PerfilDAO()
@@ -17,24 +16,24 @@ class ControladorEditarPerfil(ControladorBaseNavegable):
         datos_estudiante = self.estudiante_dao.obtener_datos_estudiante(usuario_vo.correo)
         if datos_estudiante:
             nombre, edad = datos_estudiante
-            self._vista.EditarUsuario.setText(nombre)
-            self._vista.EditarEdad.setValue(int(edad))
+            self._vista.establecer_nombre(nombre)
+            self._vista.establecer_edad(int(edad))
         else:
-            self._vista.EditarUsuario.setText("Desconocido")
-            self._vista.EditarEdad.setValue(0)
+            self._vista.establecer_nombre("Desconocido")
+            self._vista.establecer_edad(0)
 
-        # Cargar perfil
+        # Cargar datos del perfil
         perfil = self.perfil_dao.obtener_datos_perfil(usuario_vo.correo)
         if perfil:
             descripcion, actividades, _ = perfil
-            self._vista.EditarDescripcion.setPlainText(descripcion or "")
-            self._vista.EditarActividades.setPlainText(actividades or "")
+            self._vista.establecer_descripcion(descripcion or "")
+            self._vista.establecer_actividades(actividades or "")
 
     def guardar_perfil(self):
-        nuevo_usuario = self._vista.EditarUsuario.text()
-        nueva_edad = self._vista.EditarEdad.value()
-        nueva_descripcion = self._vista.EditarDescripcion.toPlainText()
-        nuevas_actividades = self._vista.EditarActividades.toPlainText()
+        nuevo_usuario = self._vista.obtener_nombre()
+        nueva_edad = self._vista.obtener_edad()
+        nueva_descripcion = self._vista.obtener_descripcion()
+        nuevas_actividades = self._vista.obtener_actividades()
 
         if not nuevo_usuario.strip():
             QMessageBox.warning(self._vista, "Error", "El nombre de usuario no puede estar vacío.")

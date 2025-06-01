@@ -55,22 +55,3 @@ class EventoDAO:
             return False
 
 
-
-"""
-    def apuntar_usuario(self, id_evento, correo_usuario=None):
-        sql_check = "SELECT aforoMax, aforoActual FROM evento WHERE idEvento = ?"
-        self.cursor.execute(sql_check, (id_evento,))
-        fila = self.cursor.fetchone()
-
-        if not fila:
-            return False  # No existe el evento
-
-        aforoMax, aforoActual = fila
-        if aforoActual >= aforoMax:
-            return False  # Aforo completo
-
-        sql_update = "UPDATE evento SET aforoActual = aforoActual + 1 WHERE idEvento = ?"
-        self.cursor.execute(sql_update, (id_evento,))
-        
-        return True
-"""

@@ -12,9 +12,21 @@ class MiPerfil(VistaNavegable, Form):
         super().__init__()
         self.setupUi(self)
         self.conectar_botones_navegacion()
+        self._conectar_botones_especificos()
 
-        # boton extra pq tiene editar perfil
+    def _conectar_botones_especificos(self):
         boton_editar = self.findChild(QPushButton, "BotonEditarPerfil")
         if boton_editar:
             boton_editar.clicked.connect(self.editar_perfil_clicked)
-       
+
+    def mostrar_nombre(self, nombre):
+        self.label_Usuario.setText(nombre)
+
+    def mostrar_edad(self, edad):
+        self.label_Edad.setText(str(edad))
+
+    def mostrar_descripcion(self, descripcion):
+        self.label_Descripcion.setText(descripcion)
+
+    def mostrar_actividades(self, actividades):
+        self.ListaActividades.setText(actividades)
