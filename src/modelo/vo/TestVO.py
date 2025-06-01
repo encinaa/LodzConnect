@@ -4,5 +4,5 @@ class TestVO():
         self.correo_admin = correo_admin
         self.pregunta1 = pregunta1
         self.pregunta2 = pregunta2
-        self.respuestas1 = respuestas1
-        self.respuestas2 = respuestas2
+        self.respuestas1 = respuestas1 or ""
+        self.respuestas2 = respuestas2 or ""

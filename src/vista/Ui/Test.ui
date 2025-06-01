@@ -142,6 +142,71 @@
      <string>Test</string>
     </property>
    </widget>
+   <widget class="QLabel" name="campoPregunta1">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>90</y>
+      <width>581</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #d0e0ce;</string>
+    </property>
+    <property name="placeholderText" stdset="0">
+     <string>Nombre de usuario</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="campoPregunta2">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>300</y>
+      <width>581</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #d0e0ce;</string>
+    </property>
+    <property name="placeholderText" stdset="0">
+     <string>Nombre de usuario</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="campoRespuesta1">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>130</y>
+      <width>581</width>
+      <height>121</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="campoRespuesta2">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>340</y>
+      <width>581</width>
+      <height>121</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="BotonGuardarMiRespuesta">
+    <property name="geometry">
+     <rect>
+      <x>609</x>
+      <y>510</y>
+      <width>231</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Guardar mi respuesta</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources>
