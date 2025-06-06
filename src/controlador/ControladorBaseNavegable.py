@@ -63,16 +63,10 @@ class ControladorBaseNavegable(ABC):
         from src.vista.PáginaPrincipal import PáginaPrincipal
         from src.controlador.ControladorPaginaPrincipal import ControladorPaginaPrincipal
 
-        confirmacion = QMessageBox.question(
-            self._vista,
-            "Cerrar sesión",
-            "¿Estás seguro de que deseas cerrar sesión?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
-
-        if confirmacion == QMessageBox.Yes:
+        confirmacion = self._vista.confirmar_cierre_sesion()
+        if confirmacion:
             vista = PáginaPrincipal()
             self._controladores["principal"] = ControladorPaginaPrincipal(vista)
             vista.show()
             self._vista.close()
+

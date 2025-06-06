@@ -1,5 +1,5 @@
 # ESTA ES LA PADRE DE TODA LA COLUMNA DE LA IZQDA EN TABLON DEL ESTUDIANTE (esq pa copiar codigo heredamos mejor)
-from PyQt5.QtWidgets import QMainWindow, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 class VistaNavegable(QMainWindow):
@@ -28,3 +28,13 @@ class VistaNavegable(QMainWindow):
             boton = self.findChild(QPushButton, nombre_boton)
             if boton:
                 boton.clicked.connect(señal)
+
+    def confirmar_cierre_sesion(self):
+        respuesta = QMessageBox.question(
+            self,
+            "Cerrar sesión",
+            "¿Estás seguro de que deseas cerrar sesión?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        return respuesta == QMessageBox.Yes
