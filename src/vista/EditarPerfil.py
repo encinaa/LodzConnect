@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QPushButton, QSpinBox, QLineEdit, QTextEdit
+from PyQt5.QtWidgets import QPushButton, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import uic
 from src.vista.VistaNavegable import VistaNavegable
@@ -43,3 +43,6 @@ class EditarPerfil(VistaNavegable, Form):
 
     def obtener_actividades(self):
         return self.EditarActividades.toPlainText()
+
+    def mostrar_mensaje_error(self, mensaje):
+        QMessageBox.warning(self, "Error", mensaje)
