@@ -2,6 +2,7 @@ import re
 from src.modelo.vo.EstudianteVO import EstudianteVO
 from src.utils.email_utils import enviar_correo 
 import os
+from src.utils.seguridad_utils import hashear_contraseña
 
 
 class RegistroLogica:
@@ -28,7 +29,8 @@ class RegistroLogica:
         if self.usuario_dao.existe_usuario(correo):
             return False, "El usuario ya está registrado."
 
-        estudiante = EstudianteVO(correo, contraseña, nombre, edad)
+        contraseña_hash = hashear_contraseña(contraseña)
+        estudiante = EstudianteVO(correo, contraseña_hash, nombre, edad)
         self.estudiante_dao.insertar_estudiante(estudiante)
 
         self.enviar_correo_confirmacion(correo)
