@@ -1,5 +1,3 @@
-
-from PyQt5.QtWidgets import QMessageBox
 from src.modelo.dao.UsuarioDAO import UsuarioDAO
 from src.modelo.dao.EstudianteDAO import EstudianteDAO
 from src.modelo.RegistroLogica import RegistroLogica
@@ -28,64 +26,14 @@ class ControladorRegistro:
         exito, mensaje = self.logica.registrar_usuario(correo, contraseña, confirmar, nombre, edad)
 
         if exito:
-            self.mostrar_mensaje_info("Registro exitoso", mensaje)
+            self._vista.mostrar_mensaje("informacion", "Registro exitoso", mensaje)
             if self.vista_principal:
                 self.vista_principal.show()
             self._vista.close()
         else:
-            self.mostrar_mensaje_error("Error de registro", mensaje)
+            self._vista.mostrar_mensaje("error", "Error de registro", mensaje)
 
     def on_volver_clicked(self):
         if self.vista_principal is not None:
             self.vista_principal.show()
         self._vista.close()
-
-    def mostrar_mensaje_error(self, titulo, mensaje):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Warning)
-        msg.setWindowTitle(titulo)
-        msg.setText(mensaje)
-        msg.setStyleSheet("""
-            QMessageBox {
-                background-color: white;
-            }
-            QLabel {
-                color: black;
-                font-size: 13px;
-            }
-            QPushButton {
-                background-color: #d32f2f;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background-color: #b71c1c;
-            }
-        """)
-        msg.exec_()
-
-    def mostrar_mensaje_info(self, titulo, mensaje):
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.setWindowTitle(titulo)
-        msg.setText(mensaje)
-        msg.setStyleSheet("""
-            QMessageBox {
-                background-color: white;
-            }
-            QLabel {
-                color: black;
-                font-size: 13px;
-            }
-            QPushButton {
-                background-color: #1976d2;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-            }
-            QPushButton:hover {
-                background-color: #0d47a1;
-            }
-        """)
-        msg.exec_()
