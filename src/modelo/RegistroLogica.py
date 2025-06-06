@@ -50,13 +50,13 @@ class RegistroLogica:
         print(f"API KEY: {api_key}")
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
-        ¡Hola!
+    ¡Hola!
 
-        Te damos la bienvenida a UniConecta. Tu cuenta ha sido registrada correctamente.
+    Te damos la bienvenida a UniConecta. Tu cuenta ha sido registrada correctamente.
 
-        Gracias por unirte a nuestra comunidad.
+    Gracias por unirte a nuestra comunidad.
 
-        - El equipo de UniConecta
+    - El equipo de UniConecta
         """
         try:
             status = enviar_correo(destinatario, asunto, cuerpo)
