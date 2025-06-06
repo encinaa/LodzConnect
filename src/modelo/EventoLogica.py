@@ -1,10 +1,13 @@
 from src.modelo.vo.EventoVO import EventoVO
+from src.modelo.dao.EstudianteDAO import EstudianteDAO
 from PyQt5.QtCore import QDate, QTime
 import re
+from src.utils.email_utils import enviar_correo
 
 class EventoLogica:
     def __init__(self, evento_dao):
         self.evento_dao = evento_dao
+        self.estudiante_dao = EstudianteDAO()
 
     def registrar_evento(self, nombre, descripcion, fecha, hora, ubicacion, aforo, correo_admin):
         nombre = nombre.strip()
@@ -43,6 +46,35 @@ class EventoLogica:
         )
 
         self.evento_dao.insertar_evento(evento)
+
+        # Preparar asunto y cuerpo (puedes usar el que ya tienes)
+        asunto = f"Nuevo evento registrado: {nombre}"
+        cuerpo = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <h2>Nuevo evento en UniConecta</h2>
+            <p><strong>Nombre:</strong> {nombre}</p>
+            <p><strong>Descripción:</strong> {descripcion}</p>
+            <p><strong>Fecha:</strong> {fecha.toString("dd/MM/yyyy")}</p>
+            <p><strong>Hora:</strong> {hora.toString("HH:mm")}</p>
+            <p><strong>Ubicación:</strong> {ubicacion}</p>
+            <p><strong>Aforo máximo:</strong> {aforo}</p>
+            <br>
+            <p>¡No te lo pierdas!</p>
+        </body>
+        </html>
+        """
+
+        # Obtener todos los estudiantes hice funcion nueva un poco rara pero funciona
+        estudiantes = self.estudiante_dao.obtener_todos() 
+
+        for estudiante in estudiantes:
+            try:
+                enviar_correo(estudiante.correo, asunto, cuerpo)
+            except Exception as e:
+                print(f"Error enviando correo a {estudiante.correo}: {e}")
+
+
         return True, "Evento registrado correctamente."
 
 
@@ -71,3 +103,29 @@ class EventoLogica:
             return True, "Te has desapuntado correctamente del evento."
         else:
             return False, "No se pudo cancelar tu inscripción al evento."
+
+
+    def eliminar_evento_y_notificar(self, id_evento, nombre_evento):
+        exito = self.evento_dao.eliminar_evento(id_evento)
+        if not exito:
+            return False, "No se pudo eliminar el evento."
+
+        asunto = f"Evento eliminado: {nombre_evento}"
+        cuerpo = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <h2>Evento eliminado en UniConecta</h2>
+            <p>El evento <strong>{nombre_evento}</strong> ha sido cancelado.</p>
+            <p>Disculpa las molestias.</p>
+        </body>
+        </html>
+        """
+
+        estudiantes = self.estudiante_dao.obtener_todos()
+        for estudiante in estudiantes:
+            try:
+                enviar_correo(estudiante.correo, asunto, cuerpo)
+            except Exception as e:
+                print(f"Error enviando correo a {estudiante.correo}: {e}")
+
+        return True, "Evento eliminado y notificaciones enviadas."

@@ -50,14 +50,19 @@ class RegistroLogica:
         print(f"API KEY: {api_key}")
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
-    ¡Hola!
+<html>
+  <body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: auto;">
+      <h2 style="color: #0066cc;">¡Bienvenido a UniConecta!</h2>
+      <p>Gracias por registrarte. Tu cuenta ha sido creada con éxito.</p>
+      <p>Estamos encantados de tenerte con nosotros.</p>
+      <br>
+      <p>El equipo de UniConecta</p>
+    </div>
+  </body>
+</html>
+"""
 
-    Te damos la bienvenida a UniConecta. Tu cuenta ha sido registrada correctamente.
-
-    Gracias por unirte a nuestra comunidad.
-
-    - El equipo de UniConecta
-        """
         try:
             status = enviar_correo(destinatario, asunto, cuerpo)
             return status

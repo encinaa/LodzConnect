@@ -17,7 +17,7 @@ def enviar_correo(destino, asunto, cuerpo, archivo_adjunto=None):
         from_email='uniconectaule@gmail.com',
         to_emails=destino,
         subject=asunto,
-        plain_text_content=cuerpo
+        html_content=cuerpo
     )
     
     # Adjuntar archivo si existe

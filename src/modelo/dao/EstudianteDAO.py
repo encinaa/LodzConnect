@@ -43,3 +43,23 @@ class EstudianteDAO:
         except Exception as e:
             print("Error eliminando estudiante:", e)
             return False
+        
+
+
+    def obtener_todos(self):
+        cursor = self.conn.getCursor()
+        try:
+            cursor.execute("SELECT correo FROM Estudiantes")
+            filas = cursor.fetchall()
+            # Devuelve una lista de objetos simples con atributo correo para que sea compatible
+            class EstudianteSimple:
+                def __init__(self, correo):
+                    self.correo = correo
+            
+            return [EstudianteSimple(fila[0]) for fila in filas]
+        except Exception as e:
+            print(f"Error al obtener estudiantes: {e}")
+            return []
+        finally:
+            cursor.close()
+

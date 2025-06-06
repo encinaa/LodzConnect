@@ -28,8 +28,9 @@ class ControladorEventoAdmin(ControladorBaseNavegableAdmin):
         confirmacion = self._vista.pedir_confirmacion_eliminacion(nombre_evento)
         if confirmacion:
             exito = self.evento_dao.eliminar_evento(id_evento)
+            exito, mensaje = self.logica.eliminar_evento_y_notificar(id_evento, nombre_evento)
             if exito:
-                self._vista.mostrar_mensaje_exito("Evento eliminado correctamente.")
+                self._vista.mostrar_mensaje_exito(mensaje)
                 self.mostrar_eventos()
             else:
                 self._vista.mostrar_mensaje_error("No se pudo eliminar el evento.")
