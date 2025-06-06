@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QMessageBox
 from src.modelo.vo.PublicacionVO import PublicacionVO
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
 from datetime import datetime
@@ -15,11 +14,11 @@ class ControladorPopupPublicacion:
         texto = self.vista.texto.toPlainText().strip()
 
         if not texto:
-            QMessageBox.warning(self.vista, "Error", "El texto no puede estar vacío.")
+            self.vista.mostrar_mensaje("error", "Error", "El texto no puede estar vacío.")
             return
 
         if len(texto) > 500:
-            QMessageBox.warning(self.vista, "Error", "La publicación no puede exceder los 500 caracteres.")
+            self.vista.mostrar_mensaje("error", "Error", "La publicación no puede exceder los 500 caracteres.")
             return
 
         nueva_publicacion = PublicacionVO(
@@ -29,6 +28,7 @@ class ControladorPopupPublicacion:
             cuentaOrigen=self.correo_usuario,
             descripcion=texto    
         )
+
         self.dao.insertar_publicacion(nueva_publicacion)
-        QMessageBox.information(self.vista, "Publicado", "Tu publicación se ha guardado.")
+        self.vista.mostrar_mensaje("informacion", "Publicado", "Tu publicación se ha guardado.")
         self.vista.accept()
