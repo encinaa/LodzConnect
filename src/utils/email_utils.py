@@ -19,8 +19,7 @@ def enviar_correo(destino, asunto, cuerpo, archivo_adjunto=None):
         subject=asunto,
         html_content=cuerpo
     )
-    
-    # Adjuntar archivo si existe
+    """
     if archivo_adjunto and os.path.exists(archivo_adjunto):
         with open(archivo_adjunto, "rb") as f:
             data = f.read()
@@ -32,7 +31,7 @@ def enviar_correo(destino, asunto, cuerpo, archivo_adjunto=None):
                 Disposition("attachment")
             )
             message.attachment = attachment
-    
+    """
     try:
         sg = SendGridAPIClient(api_key)
         response = sg.send(message)

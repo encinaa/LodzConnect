@@ -40,7 +40,7 @@ class CrearTestPopup(QDialog):
             correo_admin=self.correo_admin,
             pregunta1=pregunta1,
             pregunta2=pregunta2,
-            respuestas1="[]",  # '??????
+            respuestas1="[]",  # ???almacena la lista vacia pero sa igua
             respuestas2="[]"
         )
 

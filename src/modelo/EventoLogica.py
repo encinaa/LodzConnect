@@ -21,11 +21,17 @@ class EventoLogica:
         if not re.match(r"[^@]+@[^@]+\.[^@]+", correo_admin):
             return False, "El correo del administrador no es válido."
 
+        if isinstance(fecha, str):
+            fecha = QDate.fromString(fecha, "yyyy-MM-dd")
+
         if not isinstance(fecha, QDate) or not fecha.isValid():
             return False, "La fecha no es válida."
 
         if fecha < QDate.currentDate():
             return False, "La fecha del evento no puede ser anterior a hoy."
+
+        if isinstance(hora, str):
+            hora = QTime.fromString(hora, "HH:mm:ss")
 
         if not isinstance(hora, QTime) or not hora.isValid():
             return False, "La hora no es válida."

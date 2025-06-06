@@ -11,11 +11,10 @@ import bcrypt
 
 def verificar_contraseña(contraseña_ingresada, hash_almacenado):
     try:
-        # Si el hash almacenado empieza como un hash válido de bcrypt
         if hash_almacenado.startswith("$2b$") or hash_almacenado.startswith("$2a$"):
             return bcrypt.checkpw(contraseña_ingresada.encode('utf-8'), hash_almacenado.encode('utf-8'))
         else:
-            # Comparación directa si no está hasheado (texto plano)
+            # Comparación directa si no está hasheado (me daba error al entrar el master)
             return contraseña_ingresada == hash_almacenado
     except Exception as e:
         print(f"Error al verificar contraseña: {e}")
