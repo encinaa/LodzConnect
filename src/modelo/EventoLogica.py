@@ -132,4 +132,34 @@ class EventoLogica:
 
 
     def modificar_evento(self, id_evento, nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin):
-        return self.evento_dao.modificar_evento(id_evento, nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin), "Evento actualizado correctamente."
+        exito = self.evento_dao.modificar_evento(id_evento, nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin)
+
+        if not exito:
+            return False, "No se pudo modificar el evento."
+
+        # Preparar asunto y cuerpo del correo
+        asunto = f"Evento modificado: {nombre}"
+        cuerpo = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <h2>Evento actualizado en UniConecta</h2>
+            <p><strong>Nombre:</strong> {nombre}</p>
+            <p><strong>Descripción:</strong> {descripcion}</p>
+            <p><strong>Fecha:</strong> {QDate.fromString(fecha, "yyyy-MM-dd").toString("dd/MM/yyyy")}</p>
+            <p><strong>Hora:</strong> {hora[:5]}</p>
+            <p><strong>Ubicación:</strong> {ubicacion}</p>
+            <p><strong>Aforo máximo:</strong> {aforo_max}</p>
+            <br>
+            <p>¡Revisa los detalles del evento actualizado!</p>
+        </body>
+        </html>
+        """
+
+        estudiantes = self.estudiante_dao.obtener_todos()
+        for estudiante in estudiantes:
+            try:
+                enviar_correo(estudiante.correo, asunto, cuerpo)
+            except Exception as e:
+                print(f"Error enviando correo a {estudiante.correo}: {e}")
+
+        return True, "Evento actualizado y notificaciones enviadas."
