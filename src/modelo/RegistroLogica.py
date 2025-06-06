@@ -1,6 +1,8 @@
 import re
 from src.modelo.vo.EstudianteVO import EstudianteVO
 from src.utils.email_utils import enviar_correo 
+import os
+
 
 class RegistroLogica:
     def __init__(self, usuario_dao, estudiante_dao):
@@ -44,6 +46,8 @@ class RegistroLogica:
         )
 
     def enviar_correo_confirmacion(self, destinatario):
+        api_key = os.environ.get("SENDGRID_API_KEY")
+        print(f"API KEY: {api_key}")
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
         ¡Hola!
