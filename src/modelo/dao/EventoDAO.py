@@ -64,3 +64,16 @@ class EventoDAO:
             print(f"Error eliminando evento: {e}")
             return False
 
+    def modificar_evento(self, id_evento, nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin):
+        try:
+            sql = """
+                UPDATE evento
+                SET nombre=?, descripcion=?, fecha=?, hora=?, ubicacion=?, aforoMax=?, correo_admin=?
+                WHERE idEve=?
+            """
+            self.cursor.execute(sql, (nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin, id_evento))
+
+            return True
+        except Exception as e:
+            print(f"Error al modificar evento: {e}")
+            return False

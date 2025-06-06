@@ -1,6 +1,7 @@
 from PyQt5 import uic
 from src.vista.VistaNavegableAdmin import VistaNavegableAdmin
 from PyQt5.QtCore import pyqtSignal, Qt
+from datetime import datetime  
 from PyQt5.QtWidgets import QMessageBox, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QWidget
 
 Form, _ = uic.loadUiType("./src/vista/Ui/EventoAdmin.ui")
@@ -8,6 +9,7 @@ Form, _ = uic.loadUiType("./src/vista/Ui/EventoAdmin.ui")
 class EventoAdmin(VistaNavegableAdmin, Form):
     anadir_evento_clicked = pyqtSignal()
     eliminar_evento_solicitado = pyqtSignal(int, str)
+    modificar_evento_solicitado = pyqtSignal(object)
 
     def __init__(self):
         super().__init__()
@@ -80,7 +82,13 @@ class EventoAdmin(VistaNavegableAdmin, Form):
             lambda _, eid=evento.idEve, enombre=evento.nombre: self.eliminar_evento_solicitado.emit(eid, enombre)
         )
 
+        boton_modificar = QPushButton("✏️ Modificar")
+        boton_modificar.setCursor(Qt.PointingHandCursor)
+        boton_modificar.clicked.connect(lambda _, e=evento: self.modificar_evento_solicitado.emit(e))
+
+
         fila_botones = QHBoxLayout()
+        fila_botones.addWidget(boton_modificar) 
         fila_botones.addStretch()
         fila_botones.addWidget(boton_eliminar)
         layout_general.addLayout(fila_botones)
@@ -96,3 +104,12 @@ class EventoAdmin(VistaNavegableAdmin, Form):
         """)
 
         return widget
+    
+
+    def rellenar_campos_evento(self, evento):
+        self.NombreEvento.setPlainText(evento.nombre)
+        self.DescripcionEvento.setPlainText(evento.descripcion)
+        self.FechaEvento.setDate(datetime.strptime(evento.fecha, "%Y-%m-%d").date())
+        self.HoraEvento.setTime(datetime.strptime(evento.hora, "%H:%M:%S").time())
+        self.UbicacionEvento.setPlainText(evento.ubicacion)
+        self.AforoMax.setValue(int(evento.aforoMax))

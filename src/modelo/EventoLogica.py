@@ -129,3 +129,7 @@ class EventoLogica:
                 print(f"Error enviando correo a {estudiante.correo}: {e}")
 
         return True, "Evento eliminado y notificaciones enviadas."
+
+
+    def modificar_evento(self, id_evento, nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin):
+        return self.evento_dao.modificar_evento(id_evento, nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin), "Evento actualizado correctamente."
