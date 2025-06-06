@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 class VistaNavegableAdmin(QMainWindow):
@@ -24,3 +24,16 @@ class VistaNavegableAdmin(QMainWindow):
             boton = self.findChild(QPushButton, nombre_boton)
             if boton:
                 boton.clicked.connect(señal)
+
+    from PyQt5.QtWidgets import QMessageBox
+
+    def confirmar_cierre_sesion(self):
+        respuesta = QMessageBox.question(
+            self,
+            "Cerrar sesión",
+            "¿Estás seguro de que deseas cerrar sesión?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        return respuesta == QMessageBox.Yes
+
