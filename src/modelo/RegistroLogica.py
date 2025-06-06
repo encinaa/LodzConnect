@@ -1,10 +1,6 @@
-
 import re
-import random
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from src.modelo.vo.EstudianteVO import EstudianteVO
+from src.utils.email_utils import enviar_correo 
 
 class RegistroLogica:
     def __init__(self, usuario_dao, estudiante_dao):
@@ -33,8 +29,7 @@ class RegistroLogica:
         estudiante = EstudianteVO(correo, contraseña, nombre, edad)
         self.estudiante_dao.insertar_estudiante(estudiante)
 
-        codigo = self.generar_codigoVerf()
-        self.enviar_correo_confirmacion(correo, codigo)
+        self.enviar_correo_confirmacion(correo)
 
         return True, "Usuario registrado correctamente. Revisa tu correo."
 
@@ -48,31 +43,20 @@ class RegistroLogica:
             re.search(r"\d", contraseña)
         )
 
-    def generar_codigoVerf(self, longitud=6):
-        return ''.join(str(random.randint(0, 9)) for _ in range(longitud))
-
-    def enviar_correo_confirmacion(self, destinatario, codigo):
-        remitente = "uniconectaule@gmail.com"
-        contraseña = "Asdfghj1."
-
+    def enviar_correo_confirmacion(self, destinatario):
         asunto = "Confirmación de cuenta"
         cuerpo = f"""
         ¡Hola!
-        Gracias por registrarte. Tu código de confirmación para recuperar posteriormente tu contraseña es: {codigo}
-        ¡Ten cuidado no la pierdas!
+
+        Te damos la bienvenida a UniConecta. Tu cuenta ha sido registrada correctamente.
+
+        Gracias por unirte a nuestra comunidad.
+
+        - El equipo de UniConecta
         """
-
-        mensaje = MIMEMultipart()
-        mensaje['From'] = remitente
-        mensaje['To'] = destinatario
-        mensaje['Subject'] = asunto
-        mensaje.attach(MIMEText(cuerpo, 'plain'))
-
         try:
-            with smtplib.SMTP('smtp.gmail.com', 587) as servidor:
-                servidor.starttls()
-                servidor.login(remitente, contraseña)
-                servidor.send_message(mensaje)
-                print("Correo enviado correctamente.")
+            status = enviar_correo(destinatario, asunto, cuerpo)
+            return status
         except Exception as e:
             print(f"Error al enviar correo: {e}")
+            return None
