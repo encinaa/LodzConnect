@@ -14,7 +14,7 @@ class LoginLogica:
 
     def autenticar_usuario(self, correo, contraseña):
         if not self.validar_correo(correo):
-            return False, "Debes usar un correo institucional válido: usuario@estudiantes.unileon.es o usuario@estudiantes.unileon.es"
+            return False, "Debes usar un correo institucional válido: usuario@estudiantes.unileon.es o usuario@unileon.es"
 
         if len(correo.strip()) <= 3:
             return False, "Correo inválido."

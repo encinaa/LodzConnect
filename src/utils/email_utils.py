@@ -19,19 +19,6 @@ def enviar_correo(destino, asunto, cuerpo, archivo_adjunto=None):
         subject=asunto,
         html_content=cuerpo
     )
-    """
-    if archivo_adjunto and os.path.exists(archivo_adjunto):
-        with open(archivo_adjunto, "rb") as f:
-            data = f.read()
-            encoded = base64.b64encode(data).decode()
-            attachment = Attachment(
-                FileContent(encoded),
-                FileName(os.path.basename(archivo_adjunto)),
-                FileType("application/pdf"),
-                Disposition("attachment")
-            )
-            message.attachment = attachment
-    """
     try:
         sg = SendGridAPIClient(api_key)
         response = sg.send(message)
