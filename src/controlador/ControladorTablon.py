@@ -6,22 +6,10 @@ class ControladorTablon(ControladorBaseNavegable):
     def __init__(self, vista, correo_usuario):
         super().__init__(vista, correo_usuario)
         self.publicacion_dao = PublicacionDAO()
-
-        self.configurar_layout_publicaciones()
         self.mostrar_publicaciones()
-
         self._vista.actualizar_publicaciones_clicked.connect(self.mostrar_publicaciones)
         self._vista.confirmar_eliminacion.connect(self.eliminar_publicacion)
-
-    def configurar_layout_publicaciones(self):
-        contenedor = self._vista.findChild(QWidget, "contenedorPublicaciones")
-        if contenedor and contenedor.layout() is None:
-            from PyQt5.QtWidgets import QVBoxLayout
-            layout = QVBoxLayout()
-            layout.setContentsMargins(10, 10, 10, 10)
-            layout.setSpacing(10)
-            contenedor.setLayout(layout)
-
+ 
     def mostrar_publicaciones(self):
         publicaciones = self.publicacion_dao.obtener_todas_publicaciones()
         self._vista.mostrar_lista_publicaciones(publicaciones, self.correo_usuario, self.abrir_perfil_otro, self._vista.emitir_confirmacion_eliminacion)

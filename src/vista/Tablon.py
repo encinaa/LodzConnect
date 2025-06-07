@@ -18,6 +18,14 @@ class Tablon(VistaNavegable, Form):
         if boton_actualizar:
             boton_actualizar.clicked.connect(self.actualizar_publicaciones_clicked)
 
+        # Configuración del layout del contenedor de publicaciones
+        contenedor = self.findChild(QWidget, "contenedorPublicaciones")
+        if contenedor and contenedor.layout() is None:
+            layout = QVBoxLayout()
+            layout.setContentsMargins(10, 10, 10, 10)
+            layout.setSpacing(10)
+            contenedor.setLayout(layout)
+
     def mostrar_lista_publicaciones(self, publicaciones, correo_usuario, callback_perfil, callback_eliminar):
         contenedor = self.findChild(QWidget, "contenedorPublicaciones")
         if not contenedor:

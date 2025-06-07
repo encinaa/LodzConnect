@@ -17,6 +17,30 @@ class TablonAdmin(VistaNavegableAdmin, Form):
         if boton_actualizar:
             boton_actualizar.clicked.connect(self.actualizar_publicaciones_clicked)
 
+    def configurar_layout_publicaciones(self):
+        contenedor = self.findChild(QWidget, "contenedorPublicaciones")
+        if contenedor and contenedor.layout() is None:
+            layout = QVBoxLayout()
+            layout.setContentsMargins(10, 10, 10, 10)
+            layout.setSpacing(10)
+            contenedor.setLayout(layout)
+
+    def mostrar_lista_publicaciones(self, publicaciones, callback_perfil, callback_eliminar):
+        contenedor = self.findChild(QWidget, "contenedorPublicaciones")
+        if not contenedor or contenedor.layout() is None:
+            return
+
+        layout = contenedor.layout()
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
+        for publicacion in publicaciones:
+            widget = self.crear_widget_publicacion(publicacion, callback_perfil, callback_eliminar)
+            layout.addWidget(widget)
+
     def crear_widget_publicacion(self, publicacion, callback_perfil, callback_eliminar):
         widget = QWidget()
         layout_general = QVBoxLayout()
@@ -24,33 +48,24 @@ class TablonAdmin(VistaNavegableAdmin, Form):
 
         fila_superior = QHBoxLayout()
 
-        # Botón eliminar (admin puede eliminar todos)
         boton_eliminar = QPushButton("❌")
         boton_eliminar.setFixedSize(40, 40)
-        boton_eliminar.setStyleSheet("""
-            color: red; 
-            border: none; 
-            font-weight: bold; 
-            padding-bottom: 3px;
-        """)
+        boton_eliminar.setStyleSheet("color: red; border: none; font-weight: bold; padding-bottom: 3px;")
         boton_eliminar.setCursor(Qt.PointingHandCursor)
         boton_eliminar.clicked.connect(lambda _, pub=publicacion: callback_eliminar(pub))
         fila_superior.addWidget(boton_eliminar)
 
-        # Botón de perfil
         boton_origen = QPushButton(f"👤 {publicacion.cuentaOrigen}")
         boton_origen.setStyleSheet("border: none; color: #007acc; text-align: left;")
         boton_origen.setCursor(Qt.PointingHandCursor)
         boton_origen.clicked.connect(lambda _, correo=publicacion.cuentaOrigen: callback_perfil(correo))
         fila_superior.addWidget(boton_origen)
 
-        # Fecha
         label_fecha = QLabel(f"📅 {publicacion.fecha}")
         label_fecha.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         fila_superior.addStretch()
         fila_superior.addWidget(label_fecha)
 
-        # Descripción
         label_desc = QLabel(f"📝 {publicacion.descripcion}")
         label_desc.setWordWrap(True)
 
