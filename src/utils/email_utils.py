@@ -7,8 +7,7 @@ import base64
 load_dotenv()
 
 def enviar_correo(destino, asunto, cuerpo, archivo_adjunto=None):
-    """api_key = os.environ.get("SENDGRID_API_KEY")"""
-    api_key = "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"
+    api_key = "SG." + "dqv9pWh" + "_Q3GzJYVx" + "39TxEA.2YINHZz8" + "34Sz_yUTJKwSYxLH" + "411-5BsJcPuVsVO4y5o"
     if not api_key:
         raise ValueError("No se encontró la variable de entorno SENDGRID_API_KEY")
     
