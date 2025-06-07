@@ -1,6 +1,6 @@
 from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
-from PyQt5.QtWidgets import QWidget
+
 
 class ControladorTablon(ControladorBaseNavegable):
     def __init__(self, vista, correo_usuario):

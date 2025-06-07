@@ -1,7 +1,7 @@
 from src.modelo.dao.EstudianteDAO import EstudianteDAO
 from src.modelo.dao.PerfilDAO import PerfilDAO
 from src.controlador.ControladorBaseNavegable import ControladorBaseNavegable
-from PyQt5.QtWidgets import QMessageBox
+
 
 class ControladorEditarPerfil(ControladorBaseNavegable):
     def __init__(self, vista, usuario_vo):
