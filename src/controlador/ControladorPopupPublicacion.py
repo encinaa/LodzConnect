@@ -14,11 +14,11 @@ class ControladorPopupPublicacion:
         texto = self.vista.texto.toPlainText().strip()
 
         if not texto:
-            self.vista.mostrar_mensaje("error", "Error", "El texto no puede estar vacío.")
+            self.vista.mostrar_mensaje("error", "Error", "Text must be fullfilled.")
             return
 
         if len(texto) > 500:
-            self.vista.mostrar_mensaje("error", "Error", "La publicación no puede exceder los 500 caracteres.")
+            self.vista.mostrar_mensaje("error", "Error", "Publication can't exceed 500 carachteres.")
             return
 
         nueva_publicacion = PublicacionVO(
@@ -30,5 +30,5 @@ class ControladorPopupPublicacion:
         )
 
         self.dao.insertar_publicacion(nueva_publicacion)
-        self.vista.mostrar_mensaje("informacion", "Publicado", "Tu publicación se ha guardado.")
+        self.vista.mostrar_mensaje("Information", "Posted", "Your post has been saved.")
         self.vista.accept()

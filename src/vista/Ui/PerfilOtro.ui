@@ -49,7 +49,7 @@
      <string notr="true">font: 18pt &quot;Century&quot;; color: #388e3c;</string>
     </property>
     <property name="text">
-     <string>Perfil</string>
+     <string>Profile</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_Usuario">
@@ -97,35 +97,6 @@
      <string notr="true">background-color: #d0e0ce;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_Actividades">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>260</y>
-      <width>200</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #2e7d32; color: white; font-weight: bold; padding: 5px; border-radius: 5px;</string>
-    </property>
-    <property name="text">
-     <string>📝 Lista de Actividades</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="ListaActividades">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>300</y>
-      <width>400</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #d0e0ce;</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="BotonVolver">
     <property name="geometry">
      <rect>
@@ -136,7 +107,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Volver</string>
+     <string>Return</string>
     </property>
    </widget>
   </widget>

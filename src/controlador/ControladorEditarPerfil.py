@@ -27,21 +27,21 @@ class ControladorEditarPerfil(ControladorBaseNavegable):
         if perfil:
             descripcion, actividades, _ = perfil
             self._vista.establecer_descripcion(descripcion or "")
-            self._vista.establecer_actividades(actividades or "")
+            #self._vista.establecer_actividades(actividades or "")
 
 
     def guardar_perfil(self):
         nuevo_usuario = self._vista.obtener_nombre()
         nueva_edad = self._vista.obtener_edad()
         nueva_descripcion = self._vista.obtener_descripcion()
-        nuevas_actividades = self._vista.obtener_actividades()
+        #nuevas_actividades = self._vista.obtener_actividades()
 
         if not nuevo_usuario.strip():
-            self._vista.mostrar_mensaje_error("El nombre de usuario no puede estar vacío.")
+            self._vista.mostrar_mensaje_error("User name must be fullfilled.")
             return
 
         self.estudiante_dao.actualizar_estudiante(self.usuario_vo.correo, nuevo_usuario, nueva_edad)
-        self.perfil_dao.actualizar_perfil(self.usuario_vo.correo, nueva_descripcion, nuevas_actividades)
+        self.perfil_dao.actualizar_perfil(self.usuario_vo.correo, nueva_descripcion)
 
         # Volver a MiPerfil
         from src.vista.MiPerfil import MiPerfil

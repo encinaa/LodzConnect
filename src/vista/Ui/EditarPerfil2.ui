@@ -59,7 +59,7 @@
       }</string>
        </property>
        <property name="text">
-        <string>Tablón</string>
+        <string>Home</string>
        </property>
       </widget>
      </item>
@@ -71,7 +71,7 @@
       }</string>
        </property>
        <property name="text">
-        <string>Mi Perfil</string>
+        <string>My profile</string>
        </property>
       </widget>
      </item>
@@ -83,20 +83,7 @@
       }</string>
        </property>
        <property name="text">
-        <string>Eventos</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="BotonTest">
-       <property name="styleSheet">
-        <string notr="true">
-      QPushButton:hover {
-        background-color: #388e3c;
-      }</string>
-       </property>
-       <property name="text">
-        <string>Test</string>
+        <string>My posts</string>
        </property>
       </widget>
      </item>
@@ -108,7 +95,7 @@
       }</string>
        </property>
        <property name="text">
-        <string>Añadir publicación</string>
+        <string>New post</string>
        </property>
       </widget>
      </item>
@@ -120,7 +107,7 @@
       }</string>
        </property>
        <property name="text">
-        <string>Cerrar sesión</string>
+        <string>Log Out</string>
        </property>
       </widget>
      </item>
@@ -139,7 +126,7 @@
      <string notr="true">font: 18pt &quot;Century&quot;; color: #388e3c;</string>
     </property>
     <property name="text">
-     <string>Editar Perfil</string>
+     <string>Edit Profile</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="EditarUsuario">
@@ -153,6 +140,9 @@
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: #d0e0ce;</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
     <property name="placeholderText">
      <string>Nombre de usuario</string>
@@ -174,35 +164,6 @@
      <string>Descripción</string>
     </property>
    </widget>
-   <widget class="QLabel" name="labelActividades">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>260</y>
-      <width>200</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #2e7d32; color: white; font-weight: bold; padding: 5px; border-radius: 5px;</string>
-    </property>
-    <property name="text">
-     <string>📝 Lista de Actividades</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="EditarActividades">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>300</y>
-      <width>400</width>
-      <height>150</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: #d0e0ce;</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="BotonGuardarPerfil">
     <property name="geometry">
      <rect>
@@ -213,7 +174,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Guardar perfil</string>
+     <string>Save profile</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="EditarEdad">

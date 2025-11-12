@@ -7,7 +7,7 @@ Form, Window = uic.loadUiType("./src/vista/Ui/IniciarSesion2.ui")
 class Login(QMainWindow, Form):
     aceptar_clicked = pyqtSignal()
     volver_clicked = pyqtSignal()
-    recuperar_clicked = pyqtSignal()
+    #recuperar_clicked = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -15,7 +15,7 @@ class Login(QMainWindow, Form):
 
         self.BotonAceptar.clicked.connect(self.aceptar_clicked)
         self.BotonVolver.clicked.connect(self.volver_clicked)
-        self.BotonRecuperar.clicked.connect(self.recuperar_clicked)
+        #self.BotonRecuperar.clicked.connect(self.recuperar_clicked)
 
     def mostrar_mensaje_advertencia(self, titulo, mensaje):
         msg = QMessageBox(self)

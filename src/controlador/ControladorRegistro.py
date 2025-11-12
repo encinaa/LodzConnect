@@ -26,12 +26,12 @@ class ControladorRegistro:
         exito, mensaje = self.logica.registrar_usuario(correo, contraseña, confirmar, nombre, edad)
 
         if exito:
-            self._vista.mostrar_mensaje("informacion", "Registro exitoso", mensaje)
+            self._vista.mostrar_mensaje("Information", "Sign up successfully", mensaje)
             if self.vista_principal:
                 self.vista_principal.show()
             self._vista.close()
         else:
-            self._vista.mostrar_mensaje("error", "Error de registro", mensaje)
+            self._vista.mostrar_mensaje("error", "Sign up error", mensaje)
 
     def on_volver_clicked(self):
         if self.vista_principal is not None:

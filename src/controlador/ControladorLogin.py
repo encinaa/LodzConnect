@@ -16,7 +16,7 @@ class ControladorLogin:
         # Conectar las señales de la vista
         self._vista.aceptar_clicked.connect(self.on_login_clicked)
         self._vista.volver_clicked.connect(self.on_volver_clicked)
-        self._vista.recuperar_clicked.connect(self.on_recuperar_clicked)
+        #self._vista.recuperar_clicked.connect(self.on_recuperar_clicked)
 
     def set_pagina_principal(self, vista_principal):
         self.vista_principal = vista_principal
@@ -46,7 +46,7 @@ class ControladorLogin:
         if self.vista_principal is not None:
             self.vista_principal.show()
         self._vista.close()
-
+    """
     def on_recuperar_clicked(self):
         correo = self._vista.iniciarSesion_correo.text()
         print(f"Recuperar contraseña para: {correo}")
@@ -54,3 +54,4 @@ class ControladorLogin:
             "Recuperación de contraseña",
             f"Para recuperar su contraseña asociada a {correo}, por favor pase por secretaría."
         )
+    """

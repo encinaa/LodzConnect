@@ -32,8 +32,8 @@ class VistaNavegable(QMainWindow):
     def confirmar_cierre_sesion(self):
         respuesta = QMessageBox.question(
             self,
-            "Cerrar sesión",
-            "¿Estás seguro de que deseas cerrar sesión?",
+            "Log Out",
+            "Are you sure you want to log out?",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )

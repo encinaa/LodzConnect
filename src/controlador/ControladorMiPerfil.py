@@ -29,17 +29,19 @@ class ControladorMiPerfil(ControladorBaseNavegable):
                     self._vista.mostrar_nombre(nombre)
                     self._vista.mostrar_edad(edad)
                 else:
-                    self._vista.mostrar_nombre("Desconocido")
+                    self._vista.mostrar_nombre("Unknown")
                     self._vista.mostrar_edad("-")
 
                 datos_perfil = self.perfil_dao.obtener_datos_perfil(self.correo_usuario)
                 if datos_perfil:
-                    descripcion, lista_actividades, _ = datos_perfil
-                    self._vista.mostrar_descripcion(descripcion or "Sin descripción")
-                    self._vista.mostrar_actividades(lista_actividades or "Sin actividades")
+                    # En tu nueva app, lista_actividades no existe → valor vacío
+                    descripcion, _, _ = datos_perfil
+                    lista_actividades = ""
+                    self._vista.mostrar_descripcion(descripcion or "No description")
+                    # self._vista.mostrar_actividades(lista_actividades or "Sin actividades")
                 else:
-                    self._vista.mostrar_descripcion("Sin descripción")
-                    self._vista.mostrar_actividades("Sin actividades")
+                    self._vista.mostrar_descripcion("No description")
+                    # self._vista.mostrar_actividades("Sin actividades")
         except Exception as e:
             print(f"Error al cargar perfil: {e}")
 

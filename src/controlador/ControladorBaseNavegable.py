@@ -12,13 +12,13 @@ class ControladorBaseNavegable(ABC):
         self._controladores = {}
 
         # ESTAN TODOS AQUI PERO IGUAL HABIA Q PONERLOS EN LA VISTA
-        self._vista.mi_perfil_clicked.connect(self.abrir_miperfil)
+        #self._vista.mi_perfil_clicked.connect(self.abrir_miperfil)
         self._vista.cerrar_sesion_clicked.connect(self.cerrar_sesion)
-        self._vista.test_clicked.connect(self.abrir_test)
+        #self._vista.test_clicked.connect(self.abrir_test)
         self._vista.publicacion_clicked.connect(self.abrir_publicacion)
         self._vista.eventos_clicked.connect(self.abrir_eventos)
         self._vista.tablon_clicked.connect(self.abrir_tablon)
-
+    """
     def abrir_miperfil(self):
         from src.vista.MiPerfil import MiPerfil
         from src.controlador.ControladorMiPerfil import ControladorMiPerfil
@@ -26,7 +26,7 @@ class ControladorBaseNavegable(ABC):
         self._controladores["mi_perfil"] = ControladorMiPerfil(vista, self.correo_usuario)
         vista.show()
         self._vista.close()
-
+    
     def abrir_test(self):
         from src.vista.Test import Test
         from src.controlador.ControladorTest import ControladorTest
@@ -34,7 +34,7 @@ class ControladorBaseNavegable(ABC):
         self._controladores["test"] = ControladorTest(vista, self.correo_usuario)
         vista.show()
         self._vista.close()
-
+    """
     def abrir_publicacion(self):
         from src.vista.PublicacionPopup import PublicacionPopup
         from src.controlador.ControladorPopupPublicacion import ControladorPopupPublicacion

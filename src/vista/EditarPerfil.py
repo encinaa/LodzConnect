@@ -37,12 +37,12 @@ class EditarPerfil(VistaNavegable, Form):
 
     def obtener_descripcion(self):
         return self.EditarDescripcion.toPlainText()
-
+    """
     def establecer_actividades(self, actividades):
         self.EditarActividades.setPlainText(actividades)
 
     def obtener_actividades(self):
         return self.EditarActividades.toPlainText()
-
+    """
     def mostrar_mensaje_error(self, mensaje):
         QMessageBox.warning(self, "Error", mensaje)

@@ -6,13 +6,13 @@ from datetime import datetime
 class ControladorEventos(ControladorBaseNavegable):
     def __init__(self, vista, correo_usuario):
         super().__init__(vista, correo_usuario)
-        self.evento_dao = EventoDAO()
-        self.logica = EventoLogica(self.evento_dao)
+        #self.evento_dao = EventoDAO()
+        #self.logica = EventoLogica(self.evento_dao)
 
-        self._vista.apuntarse_solicitado.connect(self.apuntarse_evento)
-        self._vista.desapuntarse_solicitado.connect(self.desapuntarse_evento)
-        self.mostrar_eventos()
-
+        #self._vista.apuntarse_solicitado.connect(self.apuntarse_evento)
+        #self._vista.desapuntarse_solicitado.connect(self.desapuntarse_evento)
+        #self.mostrar_eventos()
+    """
     def apuntarse_evento(self, evento):
         exito, mensaje = self.logica.apuntarse(evento)
         if exito:
@@ -36,4 +36,4 @@ class ControladorEventos(ControladorBaseNavegable):
             datetime.strptime(e.hora, "%H:%M:%S").time()
         ))
         self._vista.mostrar_eventos(eventos_ordenados)
-
+    """

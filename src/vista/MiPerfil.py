@@ -27,6 +27,7 @@ class MiPerfil(VistaNavegable, Form):
 
     def mostrar_descripcion(self, descripcion):
         self.label_Descripcion.setText(descripcion)
-
+    """
     def mostrar_actividades(self, actividades):
         self.ListaActividades.setText(actividades)
+    """

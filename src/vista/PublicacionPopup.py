@@ -4,12 +4,12 @@ from PyQt5.QtCore import Qt
 class PublicacionPopup(QDialog):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Nueva Publicación")
+        self.setWindowTitle("New Post")
         self.setFixedSize(400, 300)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         self.texto = QTextEdit(self)
-        self.boton_publicar = QPushButton("Publicar", self)
+        self.boton_publicar = QPushButton("Post", self)
 
         layout = QVBoxLayout()
         layout.addWidget(self.texto)

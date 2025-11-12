@@ -12,22 +12,22 @@ class RegistroLogica:
 
     def registrar_usuario(self, correo, contraseña, confirmar, nombre, edad):
         if not nombre.strip() or not edad.strip():
-            return False, "Por favor, complete el nombre y la edad."
+            return False, "Please, complate name and age."
 
         if not edad.isdigit() or int(edad) <= 0:
-            return False, "Por favor, introduzca una edad válida."
+            return False, "Please, introduce a valid age."
 
         if contraseña != confirmar:
-            return False, "Las contraseñas no coinciden."
+            return False, "Passwords aren't identical."
 
         if not self.validar_correo(correo):
-            return False, "Por favor introduzca un correo institucional de estudiante (@estudiantes.unileon.es)."
+            return False, "Please introduce a valid email."
 
         if not self.validar_contraseña(contraseña):
-            return False, "Por favor introduzca una contraseña válida (mínimo 8 caracteres, una mayúscula y al menos un número)."
+            return False, "Please introduce a valid password (at least 8 characters, one uppercase & at least one number)."
 
         if self.usuario_dao.existe_usuario(correo):
-            return False, "El usuario ya está registrado."
+            return False, "The user is already registered."
 
         contraseña_hash = hashear_contraseña(contraseña)
         estudiante = EstudianteVO(correo, contraseña_hash, nombre, edad)
@@ -35,10 +35,11 @@ class RegistroLogica:
 
         self.enviar_correo_confirmacion(correo)
 
-        return True, "Usuario registrado correctamente. Revisa tu correo."
+        return True, "User successfully registered."
 
     def validar_correo(self, correo):
-        return re.match(r"[^@]+@estudiantes\.unileon\.es$", correo)
+        return re.match(r"[^@]+@[^@]+\.(com|es)$", correo)
+
 
     def validar_contraseña(self, contraseña):
         return (
@@ -55,11 +56,11 @@ class RegistroLogica:
 <html>
   <body style="font-family: Arial, sans-serif; color: #333;">
     <div style="max-width: 600px; margin: auto;">
-      <h2 style="color: #0066cc;">¡Bienvenido a UniConecta!</h2>
-      <p>Gracias por registrarte. Tu cuenta ha sido creada con éxito.</p>
-      <p>Estamos encantados de tenerte con nosotros.</p>
+      <h2 style="color: #0066cc;">Welcome to UniConecta!</h2>
+      <p>Thank you for registering. Your account has been successfully created.</p>
+      <p>We're delighted to have you with us.</p>
       <br>
-      <p>El equipo de UniConecta</p>
+      <p>The UniConecta Team</p>
     </div>
   </body>
 </html>

@@ -57,17 +57,7 @@
         <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
-        <string>Tablón</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="BotonMiPerfil">
-       <property name="styleSheet">
-        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
-       </property>
-       <property name="text">
-        <string>Mi Perfil</string>
+        <string>Home</string>
        </property>
       </widget>
      </item>
@@ -77,17 +67,7 @@
         <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
-        <string>Eventos</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="BotonTest">
-       <property name="styleSheet">
-        <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
-       </property>
-       <property name="text">
-        <string>Test</string>
+        <string>My posts</string>
        </property>
       </widget>
      </item>
@@ -97,7 +77,7 @@
         <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
-        <string>Añadir publicación</string>
+        <string>New post</string>
        </property>
       </widget>
      </item>
@@ -107,7 +87,7 @@
         <string notr="true">QPushButton:hover { background-color: #388e3c; }</string>
        </property>
        <property name="text">
-        <string>Cerrar sesión</string>
+        <string>Log Out</string>
        </property>
       </widget>
      </item>
@@ -126,7 +106,7 @@
      <string notr="true">font: 18pt &quot;Century&quot;; color:#388e3c;</string>
     </property>
     <property name="text">
-     <string>Tablón</string>
+     <string>Home</string>
     </property>
    </widget>
    <widget class="QScrollArea" name="scrollAreaPublicaciones">
