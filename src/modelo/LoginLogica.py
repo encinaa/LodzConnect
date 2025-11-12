@@ -11,25 +11,25 @@ class LoginLogica:
         self.usuario_dao = UsuarioDAO()
 
     def validar_correo(self, correo):
-        return re.match(r"[^@]+@(estudiantes\.)?unileon\.es$", correo)
+        return re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', correo) 
 
     def autenticar_usuario(self, correo, contraseña):
         if not self.validar_correo(correo):
-            return False, "Debes usar un correo institucional válido: usuario@estudiantes.unileon.es o usuario@unileon.es"
+            return False, "Please use a valid email"
 
         if len(correo.strip()) <= 3:
-            return False, "Correo inválido."
+            return False, "Invaled email."
 
         loginVO = LoginVO(correo, contraseña)
         if not self.usuario_dao.existe_usuario(loginVO.correo):
-            return False, "El usuario no está registrado."
+            return False, "User not registred."
 
         contraseña_hash = self.usuario_dao.obtener_contraseña(correo)
         if not contraseña_hash or not verificar_contraseña(contraseña, contraseña_hash):
-            return False, "Contraseña incorrecta."
+            return False, "Wrong password."
         
         # ¡¡¡¡¡Determinar si es estudiante o administrador por el correo
-        if "@estudiantes.unileon.es" in correo:
+        if "@gmail.com" in correo or "@outlook.com" in correo or "@hotmail.com" in correo:
             return True, "estudiante"
         elif "@unileon.es" in correo:
             return True, "administrador"
@@ -39,7 +39,7 @@ class LoginLogica:
     def login(self, correo, contraseña):
         user = self.usuario_dao.obtener_usuario_por_correo(correo)
         if not user:
-            return False, "Usuario no encontrado"
+            return False, "User not found"
 
         if verificar_contraseña(contraseña, user[1]):
             # Generar tokens
@@ -55,4 +55,4 @@ class LoginLogica:
             # Retornar tokens
             return True, {"access_token": access_token, "refresh_token": refresh_token}
         else:
-            return False, "Contraseña incorrecta"
+            return False, "Invalid password"
