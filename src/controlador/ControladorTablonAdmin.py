@@ -1,3 +1,46 @@
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INUTIL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 from src.controlador.ControladorBaseNavegableAdmin import ControladorBaseNavegableAdmin
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
 from src.vista.PerfilOtro import PerfilOtro

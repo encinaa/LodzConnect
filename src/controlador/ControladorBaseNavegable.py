@@ -3,9 +3,10 @@ from src.modelo.dao.UsuarioDAO import UsuarioDAO
 
 
 class ControladorBaseNavegable(ABC):
-    def __init__(self, vista, correo_usuario):
+    def __init__(self, vista, correo_usuario, access_token=None):
         self._vista = vista
         self.correo_usuario = correo_usuario
+        self.access_token = access_token  # ← AÑADIR ESTO
         self.usuario_dao = UsuarioDAO()
 
         # Para guardar referencias
@@ -18,12 +19,13 @@ class ControladorBaseNavegable(ABC):
         self._vista.publicacion_clicked.connect(self.abrir_publicacion)
         self._vista.eventos_clicked.connect(self.abrir_eventos)
         self._vista.tablon_clicked.connect(self.abrir_tablon)
+
     """
     def abrir_miperfil(self):
         from src.vista.MiPerfil import MiPerfil
         from src.controlador.ControladorMiPerfil import ControladorMiPerfil
         vista = MiPerfil()
-        self._controladores["mi_perfil"] = ControladorMiPerfil(vista, self.correo_usuario)
+        self._controladores["mi_perfil"] = ControladorMiPerfil(vista, self.correo_usuario, self.access_token)
         vista.show()
         self._vista.close()
     
@@ -31,22 +33,23 @@ class ControladorBaseNavegable(ABC):
         from src.vista.Test import Test
         from src.controlador.ControladorTest import ControladorTest
         vista = Test()
-        self._controladores["test"] = ControladorTest(vista, self.correo_usuario)
+        self._controladores["test"] = ControladorTest(vista, self.correo_usuario, self.access_token)
         vista.show()
         self._vista.close()
     """
+
     def abrir_publicacion(self):
         from src.vista.PublicacionPopup import PublicacionPopup
         from src.controlador.ControladorPopupPublicacion import ControladorPopupPublicacion
         popup = PublicacionPopup()
-        self._controladores["popup"] = ControladorPopupPublicacion(popup, self.correo_usuario)
+        self._controladores["popup"] = ControladorPopupPublicacion(popup, self.correo_usuario, self.access_token)
         popup.exec_()
 
     def abrir_eventos(self):
         from src.vista.Eventos import Eventos
         from src.controlador.ControladorEventos import ControladorEventos
         vista = Eventos()
-        self._controladores["eventos"] = ControladorEventos(vista, self.correo_usuario)
+        self._controladores["eventos"] = ControladorEventos(vista, self.correo_usuario, self.access_token)
         vista.show()
         self._vista.close()
 
@@ -54,7 +57,8 @@ class ControladorBaseNavegable(ABC):
         from src.vista.Tablon import Tablon
         from src.controlador.ControladorTablon import ControladorTablon
         vista = Tablon()
-        self._controladores["tablon"] = ControladorTablon(vista, self.correo_usuario)
+        # PASA EL ACCESS_TOKEN AL CONTROLADOR TABLÓN
+        self._controladores["tablon"] = ControladorTablon(vista, self.correo_usuario, self.access_token)
         vista.show()
         self._vista.close()
 
@@ -64,8 +68,17 @@ class ControladorBaseNavegable(ABC):
 
         confirmacion = self._vista.confirmar_cierre_sesion()
         if confirmacion:
+            # Limpiar tokens al cerrar sesión
+            if hasattr(self, 'access_token'):
+                self.access_token = None
+            # También limpiar en App si lo estás usando
+            try:
+                from src.app import App
+                App().set_tokens(None, None)
+            except:
+                pass
+            
             vista = PáginaPrincipal()
             self._controladores["principal"] = ControladorPaginaPrincipal(vista)
             vista.show()
             self._vista.close()
-

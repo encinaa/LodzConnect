@@ -2,6 +2,7 @@ from src.modelo.conexion.Conexion import Conexion
 from src.utils.singleton import singleton
 import datetime
 
+
 @singleton
 class RefreshTokenDAO:
     def __init__(self):
@@ -10,8 +11,11 @@ class RefreshTokenDAO:
     def insertar_refresh(self, token, correo, expires_at):
         cursor = self.conn.getCursor()
         try:
+            # Convertir datetime a string en formato MySQL
+            expires_at_str = expires_at.strftime('%Y-%m-%d %H:%M:%S')
+            
             sql = "INSERT INTO RefreshToken (token, correo, expires_at, revoked) VALUES (?, ?, ?, ?)"
-            cursor.execute(sql, (token, correo, expires_at, False))
+            cursor.execute(sql, (token, correo, expires_at_str, False))
         except Exception as e:
             print("Error insertando refresh token:", e)
         finally:
@@ -21,7 +25,13 @@ class RefreshTokenDAO:
         cursor = self.conn.getCursor()
         try:
             cursor.execute("SELECT revoked, expires_at FROM RefreshToken WHERE token = ?", (token,))
-            return cursor.fetchone()
+            resultado = cursor.fetchone()
+            if resultado:
+                # Convertir string de MySQL a datetime si es necesario
+                revoked, expires_at_str = resultado
+                # Si quieres usar como datetime: expires_at = datetime.datetime.strptime(expires_at_str, '%Y-%m-%d %H:%M:%S')
+                return revoked, expires_at_str
+            return None
         except Exception as e:
             print("Error comprobando refresh token:", e)
             return None

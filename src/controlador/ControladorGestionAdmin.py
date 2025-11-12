@@ -1,3 +1,46 @@
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INUTIL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
 from src.controlador.ControladorBaseNavegableAdmin import ControladorBaseNavegableAdmin
 
 class ControladorGestionAdmin(ControladorBaseNavegableAdmin):

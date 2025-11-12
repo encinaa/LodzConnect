@@ -1,20 +1,35 @@
 from src.modelo.vo.PublicacionVO import PublicacionVO
 from src.modelo.dao.PublicacionDAO import PublicacionDAO
+from src.utils.auth_middleware import AuthMiddleware
 from datetime import datetime
 import os
 import shutil
 import uuid
 
 class ControladorPopupPublicacion:
-    def __init__(self, vista, correo_usuario):
+    def __init__(self, vista, correo_usuario, access_token=None):
         self.vista = vista
         self.correo_usuario = correo_usuario
+        self.access_token = access_token
         self.dao = PublicacionDAO()
+        self.auth_middleware = AuthMiddleware()
 
         # support both button names that may exist on different popup implementations
         boton = getattr(self.vista, "boton_publicar", None)
         if boton:
             boton.clicked.connect(self.publicar)
+
+    def _verificar_autenticacion(self):
+        """Verifica que el usuario esté autenticado antes de publicar"""
+        if not self.access_token:
+            self.vista.mostrar_mensaje("error", "Error", "Sesión no válida")
+            return False
+        
+        valido, datos = self.auth_middleware.verificar_token(self.access_token)
+        if not valido:
+            self.vista.mostrar_mensaje("error", "Sesión expirada", "Por favor, inicie sesión nuevamente")
+            return False
+        return True
 
     def publicar(self):
         """
@@ -27,6 +42,10 @@ class ControladorPopupPublicacion:
           record for each uploaded file (description = filename). Adjust if you prefer storing full path
           or other metadata.
         """
+        # Verificar autenticación primero
+        if not self._verificar_autenticacion():
+            return
+
         # 1) File-upload path (new popup)
         if hasattr(self.vista, "obtener_rutas"):
             rutas = self.vista.obtener_rutas()

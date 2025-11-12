@@ -37,11 +37,11 @@ class LoginLogica:
             return False, "Tipo de usuario no reconocido."
 
     def login(self, correo, contraseña):
-        user = self.usuario_dao.obtener_usuario_por_correo(correo)
+        user = self.usuario_dao.obtener_por_correo(correo)
         if not user:
             return False, "User not found"
 
-        if verificar_contraseña(contraseña, user[1]):
+        if verificar_contraseña(contraseña, user.contraseña):
             # Generar tokens
             payload = {"sub": correo}
             access_token = create_access_token(payload)

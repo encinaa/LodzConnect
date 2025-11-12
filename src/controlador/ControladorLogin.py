@@ -30,27 +30,50 @@ class ControladorLogin:
         correo = self._vista.iniciarSesion_correo.text()
         contraseña = self._vista.iniciarSesion_contrasena.text()
 
+        # Primero autenticar para determinar tipo de usuario
         exito, tipo_usuario = self.logica.autenticar_usuario(correo, contraseña)
+        
         if exito:
-            if tipo_usuario == "estudiante":
-                self.ventana_tablon = Tablon()
-                self.controlador_tablon = ControladorTablon(self.ventana_tablon, correo)
-                self.ventana_tablon.show()
-            elif tipo_usuario == "administrador":
-                self.ventana_admin = TablonAdmin()
-                self.controlador_admin = ControladorTablonAdmin(self.ventana_admin, correo)
-                self.ventana_admin.show()
+            # Ahora hacer login completo para obtener tokens
+            exito_login, tokens = self.logica.login(correo, contraseña)
+            
+            if exito_login:
+                print("✓ TOKENS GENERADOS:")
+                print(f"Access: {tokens['access_token']}")
+                print(f"Refresh: {tokens['refresh_token']}")
+                
+                # Guardar tokens
+                self._guardar_tokens(tokens['access_token'], tokens['refresh_token'])
+                
+                # Verificar que se guardaron en App
+                print(f"✓ En App - Access: {App().get_access_token() is not None}")
+                print(f"✓ En App - Refresh: {App().get_refresh_token() is not None}")
+                
+                # Redirigir según tipo de usuario
+                if tipo_usuario == "estudiante":
+                    self.ventana_tablon = Tablon()
+                    # Pasar el access_token al controlador
+                    self.controlador_tablon = ControladorTablon(self.ventana_tablon, correo, tokens['access_token'])
+                    self.ventana_tablon.show()
+                elif tipo_usuario == "administrador":
+                    self.ventana_admin = TablonAdmin()
+                    # Pasar el access_token al controlador
+                    self.controlador_admin = ControladorTablonAdmin(self.ventana_admin, correo, tokens['access_token'])
+                    self.ventana_admin.show()
+                else:
+                    self._vista.mostrar_mensaje_error("Error", "User type unknown.")
+                    return
+                self._vista.close()
             else:
-                self._vista.mostrar_mensaje_error("Error", "User type unknown.")
-                return
-            self._vista.close()
+                self._vista.mostrar_mensaje_error("Login Error", tokens)  # tokens contiene el mensaje de error
         else:
-            self._vista.mostrar_mensaje_error("Autentication error", tipo_usuario)
+            self._vista.mostrar_mensaje_error("Authentication error", tipo_usuario)
 
     def on_volver_clicked(self):
         if self.vista_principal is not None:
             self.vista_principal.show()
         self._vista.close()
+
     """
     def on_recuperar_clicked(self):
         correo = self._vista.iniciarSesion_correo.text()
@@ -76,7 +99,6 @@ class ControladorLogin:
             pass
         
         # Opción 3: Guardar en configuración global de la app
-        
         App().set_tokens(access_token, refresh_token)
         
         print(f"Tokens guardados - Access: {access_token[:20]}... Refresh: {refresh_token[:20]}...")
