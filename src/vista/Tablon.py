@@ -2,6 +2,9 @@ from PyQt5.QtWidgets import QPushButton, QMessageBox, QLabel, QWidget, QVBoxLayo
 from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5 import uic
 from src.vista.VistaNavegable import VistaNavegable
+import os
+import subprocess
+import sys
 
 Form, _ = uic.loadUiType("./src/vista/Ui/Tablón4.ui")
 
@@ -74,11 +77,55 @@ class Tablon(VistaNavegable, Form):
         label_fecha.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         fila_superior.addWidget(label_fecha)
 
-        label_desc = QLabel(f"📝 {publicacion.descripcion}")
-        label_desc.setWordWrap(True)
-
         layout_general.addLayout(fila_superior)
-        layout_general.addWidget(label_desc)
+
+        # Check whether the publication description represents or refers to a file
+        descripcion = (publicacion.descripcion or "").strip()
+
+        file_path = None
+        # 1) If descripcion is an absolute or relative path that exists, use it.
+        if descripcion:
+            # treat both absolute and relative paths
+            try_path = descripcion
+            if not os.path.isabs(try_path):
+                # try relative to cwd and to an "uploads" folder
+                rel_cwd = os.path.join(os.getcwd(), try_path)
+                if os.path.exists(rel_cwd):
+                    try_path = rel_cwd
+            if os.path.exists(try_path):
+                file_path = os.path.abspath(try_path)
+
+        # 2) If descripcion is just a filename (e.g. "foo.pdf"), try to find it in ./uploads
+        if not file_path and descripcion:
+            uploads_dir = os.path.join(os.getcwd(), "uploads")
+            if os.path.isdir(uploads_dir):
+                for f in os.listdir(uploads_dir):
+                    if f == descripcion or f.endswith("_" + descripcion) or descripcion in f:
+                        file_path = os.path.join(uploads_dir, f)
+                        break
+
+        # Render file publication differently (clickable/openable)
+        if file_path and os.path.exists(file_path):
+            fila_archivo = QHBoxLayout()
+            nombre_archivo = os.path.basename(file_path)
+            label_file = QLabel(f"📎 {nombre_archivo}")
+            label_file.setWordWrap(True)
+            fila_archivo.addWidget(label_file)
+
+            btn_abrir = QPushButton("Abrir")
+            btn_abrir.setCursor(Qt.PointingHandCursor)
+            btn_abrir.setStyleSheet("color: #007acc; border: none; text-decoration: underline; background: transparent;")
+            # capture path in default arg
+            btn_abrir.clicked.connect(lambda _, p=file_path: self._abrir_archivo(p))
+            fila_archivo.addWidget(btn_abrir)
+
+            fila_archivo.addStretch()
+            layout_general.addLayout(fila_archivo)
+        else:
+            # default: show description as plain text
+            label_desc = QLabel(f"📝 {descripcion}")
+            label_desc.setWordWrap(True)
+            layout_general.addWidget(label_desc)
 
         widget.setStyleSheet("""
             background-color: #f9f9f9;
@@ -88,6 +135,18 @@ class Tablon(VistaNavegable, Form):
             margin-bottom: 10px;
         """)
         return widget
+
+    def _abrir_archivo(self, ruta):
+        try:
+            if sys.platform.startswith("darwin"):
+                subprocess.call(["open", ruta])
+            elif sys.platform.startswith("win"):
+                os.startfile(ruta)
+            else:
+                # assume linux / unix-like
+                subprocess.call(["xdg-open", ruta])
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"No se pudo abrir el archivo:\n{e}")
 
     def emitir_confirmacion_eliminacion(self, publicacion):
         respuesta = QMessageBox.question(
