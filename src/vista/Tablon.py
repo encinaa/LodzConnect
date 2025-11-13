@@ -19,9 +19,11 @@ class Tablon(VistaNavegable, Form):
 
         boton_actualizar = self.findChild(QPushButton, "BotonActualizar")
         if boton_actualizar:
-            boton_actualizar.clicked.connect(self.actualizar_publicaciones_clicked)
+            print("✅ Botón 'Actualizar' encontrado, conectando señal...")
+            boton_actualizar.clicked.connect(self._on_actualizar_clicked)
+        else:
+            print("❌ Botón 'Actualizar' NO encontrado - revisa el nombre en el .ui")
 
-        # Configuración del layout del contenedor de publicaciones
         contenedor = self.findChild(QWidget, "contenedorPublicaciones")
         if contenedor and contenedor.layout() is None:
             layout = QVBoxLayout()
@@ -29,20 +31,37 @@ class Tablon(VistaNavegable, Form):
             layout.setSpacing(10)
             contenedor.setLayout(layout)
 
+    def _on_actualizar_clicked(self):
+        """Método interno que emite la señal cuando se hace click"""
+        print("🔄 clicked - emitiendo señal...")
+        self.actualizar_publicaciones_clicked.emit()
+
     def mostrar_lista_publicaciones(self, publicaciones, correo_usuario, callback_perfil, callback_eliminar):
         contenedor = self.findChild(QWidget, "contenedorPublicaciones")
         if not contenedor:
+            print("❌ Contenedor de publicaciones no encontrado")
             return
 
         layout = contenedor.layout()
         if layout is None:
+            print("❌ Layout del contenedor no encontrado")
             return
 
+        # Limpiar publicaciones anteriores
         while layout.count():
             item = layout.takeAt(0)
             widget = item.widget()
             if widget:
                 widget.deleteLater()
+
+        print(f"📝 Mostrando {len(publicaciones)} publicaciones...")
+
+        if not publicaciones:
+            label_vacio = QLabel("No uploads yet")
+            label_vacio.setAlignment(Qt.AlignCenter)
+            label_vacio.setStyleSheet("color: #666; font-style: italic; padding: 20px;")
+            layout.addWidget(label_vacio)
+            return
 
         for pub in publicaciones:
             widget = self.crear_widget_publicacion(pub, correo_usuario, callback_perfil, callback_eliminar)
@@ -55,6 +74,7 @@ class Tablon(VistaNavegable, Form):
 
         fila_superior = QHBoxLayout()
 
+        # Botón eliminar (solo para publicaciones propias)
         if publicacion.cuentaOrigen == correo_usuario:
             boton_eliminar = QPushButton("❌")
             boton_eliminar.setFixedSize(40, 40)
@@ -65,6 +85,7 @@ class Tablon(VistaNavegable, Form):
         else:
             fila_superior.addSpacing(30)
 
+        # Botón del usuario origen
         boton_origen = QPushButton(f"👤 {publicacion.cuentaOrigen}")
         boton_origen.setStyleSheet("border: none; color: #007acc; text-align: left;")
         boton_origen.setCursor(Qt.PointingHandCursor)
@@ -73,40 +94,20 @@ class Tablon(VistaNavegable, Form):
 
         fila_superior.addStretch()
 
+        # Fecha
         label_fecha = QLabel(f"📅 {publicacion.fecha}")
         label_fecha.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         fila_superior.addWidget(label_fecha)
 
         layout_general.addLayout(fila_superior)
 
-        # Check whether the publication description represents or refers to a file
         descripcion = (publicacion.descripcion or "").strip()
-
-        file_path = None
-        # 1) If descripcion is an absolute or relative path that exists, use it.
-        if descripcion:
-            # treat both absolute and relative paths
-            try_path = descripcion
-            if not os.path.isabs(try_path):
-                # try relative to cwd and to an "uploads" folder
-                rel_cwd = os.path.join(os.getcwd(), try_path)
-                if os.path.exists(rel_cwd):
-                    try_path = rel_cwd
-            if os.path.exists(try_path):
-                file_path = os.path.abspath(try_path)
-
-        # 2) If descripcion is just a filename (e.g. "foo.pdf"), try to find it in ./uploads
-        if not file_path and descripcion:
-            uploads_dir = os.path.join(os.getcwd(), "uploads")
-            if os.path.isdir(uploads_dir):
-                for f in os.listdir(uploads_dir):
-                    if f == descripcion or f.endswith("_" + descripcion) or descripcion in f:
-                        file_path = os.path.join(uploads_dir, f)
-                        break
-
-        # Render file publication differently (clickable/openable)
-        if file_path and os.path.exists(file_path):
+        
+        # ✅ SIMPLIFICADO: Solo manejar nube y texto
+        if hasattr(publicacion, 'tipo') and publicacion.tipo == "nube":
+            # Archivo en la nube - mostrar como enlace clickeable
             fila_archivo = QHBoxLayout()
+<<<<<<< HEAD
             # Mostrar el nombre original guardado en la BD (publicacion.descripcion)
             # en lugar del nombre de archivo real en ./uploads que incluye el uuid prefix.
             nombre_archivo = descripcion if descripcion else os.path.basename(file_path)
@@ -121,11 +122,30 @@ class Tablon(VistaNavegable, Form):
             btn_abrir.clicked.connect(lambda _, p=file_path: self._abrir_archivo(p))
             fila_archivo.addWidget(btn_abrir)
 
+=======
+            nombre_archivo = os.path.basename(descripcion)
+            
+            # Botón que funciona como enlace
+            btn_archivo = QPushButton(f" {nombre_archivo}")
+            btn_archivo.setCursor(Qt.PointingHandCursor)
+            btn_archivo.setStyleSheet("""
+                color: #007acc; 
+                border: none; 
+                text-decoration: underline; 
+                background: transparent;
+                text-align: left;
+                padding: 0px;
+            """)
+            btn_archivo.clicked.connect(lambda _, url=publicacion.url: self._abrir_url_nube(url))
+            fila_archivo.addWidget(btn_archivo)
+            
+>>>>>>> facd77cd000b329d3d92f38676fc45344c8572ca
             fila_archivo.addStretch()
             layout_general.addLayout(fila_archivo)
+            
         else:
-            # default: show description as plain text
-            label_desc = QLabel(f"📝 {descripcion}")
+            # Texto plano
+            label_desc = QLabel(f" {descripcion}")
             label_desc.setWordWrap(True)
             layout_general.addWidget(label_desc)
 
@@ -138,23 +158,36 @@ class Tablon(VistaNavegable, Form):
         """)
         return widget
 
-    def _abrir_archivo(self, ruta):
+
+
+
+    def _abrir_url_nube(self, url):
+        """Abre URL de archivo en la nube en el navegador"""
         try:
+            print(f"🌐 Abriendo URL de nube: {url}")
             if sys.platform.startswith("darwin"):
-                subprocess.call(["open", ruta])
+                subprocess.call(["open", url])
             elif sys.platform.startswith("win"):
-                os.startfile(ruta)
+                subprocess.call(["start", url], shell=True)
             else:
-                # assume linux / unix-like
-                subprocess.call(["xdg-open", ruta])
+                subprocess.call(["xdg-open", url])
         except Exception as e:
+<<<<<<< HEAD
             QMessageBox.warning(self, "Error", f"Could not open the file:\n{e}")
+=======
+            QMessageBox.warning(self, "Error", f"No se pudo abrir la URL:\n{e}")
+>>>>>>> facd77cd000b329d3d92f38676fc45344c8572ca
 
     def emitir_confirmacion_eliminacion(self, publicacion):
         respuesta = QMessageBox.question(
             self,
+<<<<<<< HEAD
             "Delete Publication",
             "Are you sure you want to delete this publication?",
+=======
+            "Delete post",
+            "Are you sure you want to delete this post permanently?",
+>>>>>>> facd77cd000b329d3d92f38676fc45344c8572ca
             QMessageBox.Yes | QMessageBox.No
         )
         if respuesta == QMessageBox.Yes:
@@ -162,3 +195,6 @@ class Tablon(VistaNavegable, Form):
 
     def mostrar_mensaje_info(self, titulo, mensaje):
         QMessageBox.information(self, titulo, mensaje)
+
+    def mostrar_mensaje_error(self, titulo, mensaje):
+        QMessageBox.critical(self, titulo, mensaje)

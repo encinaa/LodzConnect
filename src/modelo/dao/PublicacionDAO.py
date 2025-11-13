@@ -44,6 +44,7 @@ class PublicacionDAO:
         """Devuelve publicaciones cuyo cuentaOrigen == correo (más recientes primero)."""
         sql = "SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion FROM Publicacion WHERE cuentaOrigen = ? ORDER BY fecha DESC"
         try:
+<<<<<<< HEAD
             self.cursor.execute(sql, (correo,))
             filas = self.cursor.fetchall()
         except Exception as e:
@@ -64,6 +65,35 @@ class PublicacionDAO:
 
         return publicaciones
     
+=======
+            #  ORDENAR por fecha descendente (más reciente primero)
+            cursor.execute("""
+                SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local 
+                FROM Publicacion 
+                ORDER BY fecha DESC
+            """)
+            filas = cursor.fetchall()
+            publicaciones = []
+            for fila in filas:
+                publicacion = PublicacionVO(
+                    idPublic=fila[0],
+                    fecha=fila[1],
+                    listaEtiquetados=eval(fila[2]) if fila[2] else [],
+                    cuentaOrigen=fila[3],
+                    descripcion=fila[4],
+                    url_nube=fila[5],
+                    ruta_local=fila[6]
+                )
+                publicaciones.append(publicacion)
+            return publicaciones
+        except Exception as e:
+            print("Error obteniendo publicaciones:", e)
+            return []
+        finally:
+            cursor.close()
+
+
+>>>>>>> facd77cd000b329d3d92f38676fc45344c8572ca
     def eliminar_publicacion(self, id_publicacion):
         sql = "DELETE FROM Publicacion WHERE idPublic = ?"
         try:
