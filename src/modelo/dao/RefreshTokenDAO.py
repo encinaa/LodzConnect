@@ -46,3 +46,15 @@ class RefreshTokenDAO:
             print("Error revocando token:", e)
         finally:
             cursor.close()
+
+    def revocar_todos_tokens_usuario(self, correo):
+        """Revoca todos los tokens de un usuario (útil para logout)"""
+        cursor = self.conn.getCursor()
+        try:
+            cursor.execute("UPDATE RefreshToken SET revoked = ? WHERE correo = ?", (True, correo))
+            #self.conn.getConexion().commit()
+            print(f"✓ Every token of {correo} revocked")
+        except Exception as e:
+            print("Error revocando tokens por correo:", e)
+        finally:
+            cursor.close()

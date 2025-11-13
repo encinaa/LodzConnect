@@ -68,16 +68,26 @@ class ControladorBaseNavegable(ABC):
 
         confirmacion = self._vista.confirmar_cierre_sesion()
         if confirmacion:
-            # Limpiar tokens al cerrar sesión
-            if hasattr(self, 'access_token'):
-                self.access_token = None
-            # También limpiar en App si lo estás usando
+            # 1. REVOCAR todos los tokens del usuario en la BD
+            try:
+                from src.modelo.dao.RefreshTokenDAO import RefreshTokenDAO
+                dao = RefreshTokenDAO()
+                dao.revocar_todos_tokens_usuario(self.correo_usuario)
+            except Exception as e:
+                print(f"⚠ Error revocando tokens: {e}")
+
+            # 2. Limpiar sesión completa en App
             try:
                 from src.app import App
-                App().set_tokens(None, None)
+                App().limpiar_sesion()
             except:
                 pass
+                
+            # 3. Limpiar tokens locales
+            self.access_token = None
+            self.refresh_token = None
             
+            # 4. Redirigir a página principal
             vista = PáginaPrincipal()
             self._controladores["principal"] = ControladorPaginaPrincipal(vista)
             vista.show()
