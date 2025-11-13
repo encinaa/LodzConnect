@@ -107,7 +107,9 @@ class Tablon(VistaNavegable, Form):
         # Render file publication differently (clickable/openable)
         if file_path and os.path.exists(file_path):
             fila_archivo = QHBoxLayout()
-            nombre_archivo = os.path.basename(file_path)
+            # Mostrar el nombre original guardado en la BD (publicacion.descripcion)
+            # en lugar del nombre de archivo real en ./uploads que incluye el uuid prefix.
+            nombre_archivo = descripcion if descripcion else os.path.basename(file_path)
             label_file = QLabel(f"📎 {nombre_archivo}")
             label_file.setWordWrap(True)
             fila_archivo.addWidget(label_file)
@@ -146,13 +148,13 @@ class Tablon(VistaNavegable, Form):
                 # assume linux / unix-like
                 subprocess.call(["xdg-open", ruta])
         except Exception as e:
-            QMessageBox.warning(self, "Error", f"No se pudo abrir el archivo:\n{e}")
+            QMessageBox.warning(self, "Error", f"Could not open the file:\n{e}")
 
     def emitir_confirmacion_eliminacion(self, publicacion):
         respuesta = QMessageBox.question(
             self,
-            "Eliminar publicación",
-            "¿Estás seguro de que deseas eliminar esta publicación?",
+            "Delete Publication",
+            "Are you sure you want to delete this publication?",
             QMessageBox.Yes | QMessageBox.No
         )
         if respuesta == QMessageBox.Yes:

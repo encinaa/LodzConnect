@@ -1,10 +1,12 @@
-from src.modelo.vo.PublicacionVO import PublicacionVO
-from src.modelo.dao.PublicacionDAO import PublicacionDAO
-from src.utils.auth_middleware import AuthMiddleware
-from datetime import datetime
+# -*- coding: utf-8 -*-
 import os
 import shutil
 import uuid
+from datetime import datetime
+
+from src.modelo.vo.PublicacionVO import PublicacionVO
+from src.modelo.dao.PublicacionDAO import PublicacionDAO
+from src.utils.auth_middleware import AuthMiddleware
 
 class ControladorPopupPublicacion:
     def __init__(self, vista, correo_usuario, access_token=None):
@@ -17,107 +19,165 @@ class ControladorPopupPublicacion:
         # support both button names that may exist on different popup implementations
         boton = getattr(self.vista, "boton_publicar", None)
         if boton:
+            # keep for backward-compatibility, but prefer reacting to archivos_subidos signal
             boton.clicked.connect(self.publicar)
+
+        # Prefer connecting to the popup's archivos_subidos signal (emitted AFTER the popup
+        # has populated its internal rutas/_rutas). This avoids a race where controlador.publicar
+        # runs before the popup updates its rutas.
+        if hasattr(self.vista, "archivos_subidos"):
+            try:
+                self.vista.archivos_subidos.connect(self._on_archivos_subidos)
+            except Exception:
+                # do not break if the signal exists but connection fails
+                pass
 
     def _verificar_autenticacion(self):
         """Verifica que el usuario esté autenticado antes de publicar"""
         if not self.access_token:
-            self.vista.mostrar_mensaje("error", "Error", "Sesión no válida")
+            try:
+                self.vista.mostrar_mensaje("error", "Error", "Sesión no válida")
+            except Exception:
+                pass
             return False
-        
+
         valido, datos = self.auth_middleware.verificar_token(self.access_token)
         if not valido:
-            self.vista.mostrar_mensaje("error", "Sesión expirada", "Por favor, inicie sesión nuevamente")
+            try:
+                self.vista.mostrar_mensaje("error", "Sesión expirada", "Por favor, inicie sesión nuevamente")
+            except Exception:
+                pass
             return False
         return True
 
+# (Muestra solo la función modificada / relevante)
+# ... importa lo que ya tengas arriba en el archivo ...
+
+    def _on_archivos_subidos(self, rutas):
+        """Handler conectado a PublicacionPopup.archivos_subidos(list_of_paths)."""
+        if not self._verificar_autenticacion():
+            return
+
+        if not rutas:
+            try:
+                self.vista.mostrar_mensaje("Information", "No files", "No selected files to upload.")
+            except Exception:
+                pass
+            return
+
+        uploads_dir = os.path.join(os.getcwd(), "uploads")
+        os.makedirs(uploads_dir, exist_ok=True)
+
+        errores = []
+        exitos = []
+        for ruta in rutas:
+            try:
+                nombre = os.path.basename(ruta)
+                destino_nombre = f"{uuid.uuid4().hex}_{nombre}"
+                destino_path = os.path.join(uploads_dir, destino_nombre)
+                shutil.copy2(ruta, destino_path)
+
+                nueva_publicacion = PublicacionVO(
+                    idPublic=None,
+                    fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    listaEtiquetados=[],
+                    cuentaOrigen=self.correo_usuario,
+                    descripcion=nombre
+                )
+                self.dao.insertar_publicacion(nueva_publicacion)
+                exitos.append(nombre)
+            except Exception as e:
+                errores.append(f"{ruta}: {e}")
+
+        if exitos:
+            try:
+                self.vista.mostrar_mensaje("Information", "Uploaded", f"The file(s) {len(exitos)} has been uploaded.")
+            except Exception:
+                pass
+            # Intentar cerrar popup
+            try:
+                self.vista.accept()
+            except Exception:
+                pass
+
+            # NOTIFICAR: recorrer ancestros para emitir la señal de recarga si existe
+            try:
+                parent_widget = (self.vista.parent() if callable(getattr(self.vista, "parent", None)) else None) or getattr(self.vista, "parentWidget", lambda: None)()
+                # si parent_widget es None, intentamos fallback con vista.parent()
+                if parent_widget is None:
+                    try:
+                        parent_widget = self.vista.parent()
+                    except Exception:
+                        parent_widget = None
+
+                # subir por los ancestros hasta encontrar un widget que exponga 'actualizar_publicaciones_clicked'
+                while parent_widget:
+                    if hasattr(parent_widget, "actualizar_publicaciones_clicked"):
+                        try:
+                            parent_widget.actualizar_publicaciones_clicked.emit()
+                        except Exception:
+                            # si no es un pyqtSignal o falla, ignorar
+                            pass
+                        break
+                    # avanzar al siguiente ancestro
+                    next_parent = None
+                    try:
+                        next_parent = parent_widget.parentWidget()
+                    except Exception:
+                        pass
+                    if next_parent is None:
+                        try:
+                            next_parent = parent_widget.parent()
+                        except Exception:
+                            next_parent = None
+                    parent_widget = next_parent
+            except Exception:
+                pass
+
+        if errores:
+            try:
+                self.vista.mostrar_mensaje("error", "Upload error", "\n".join(errores))
+            except Exception:
+                pass
+            
     def publicar(self):
         """
-        The popup used by the UI may be either:
-        - the original text-based PublicacionPopup (providing `texto` QTextEdit), or
-        - the file-upload popup (providing `obtener_rutas()`).
-        This method detects which one is present and performs the appropriate action:
-        - For text posts: keep previous behavior (validate text, create PublicacionVO and insert).
-        - For file uploads: copy the selected files into a local uploads folder and create a PublicacionVO
-          record for each uploaded file (description = filename). Adjust if you prefer storing full path
-          or other metadata.
+        Mantengo publicar() para compatibilidad con la ruta de texto antigua y
+        para el caso en que el popup no exponga la señal archivos_subidos.
         """
         # Verificar autenticación primero
         if not self._verificar_autenticacion():
             return
 
-        # 1) File-upload path (new popup)
+        # 1) File-upload path (legacy): try obtener_rutas() if present
         if hasattr(self.vista, "obtener_rutas"):
             rutas = self.vista.obtener_rutas()
-            if not rutas:
-                # keep message type consistent with vista.mostrar_mensaje implementation
+            if rutas is None:
                 try:
                     self.vista.mostrar_mensaje("Information", "No files", "No selected files to upload.")
                 except Exception:
-                    # fallback to a no-op if vista doesn't implement mostrar_mensaje
                     pass
                 return
 
-            # Prepare uploads directory inside current working dir; you can change this path
-            uploads_dir = os.path.join(os.getcwd(), "uploads")
-            os.makedirs(uploads_dir, exist_ok=True)
-
-            errores = []
-            exitos = []
-            for ruta in rutas:
-                try:
-                    nombre = os.path.basename(ruta)
-                    # prefix with uuid to avoid collisions
-                    destino_nombre = f"{uuid.uuid4().hex}_{nombre}"
-                    destino_path = os.path.join(uploads_dir, destino_nombre)
-                    shutil.copy2(ruta, destino_path)
-
-                    # create a PublicacionVO record referring to the uploaded file (descripcion holds original filename)
-                    nueva_publicacion = PublicacionVO(
-                        idPublic=None,
-                        fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        listaEtiquetados=[],
-                        cuentaOrigen=self.correo_usuario,
-                        descripcion=nombre
-                    )
-                    # insert into DB
-                    self.dao.insertar_publicacion(nueva_publicacion)
-
-                    exitos.append(nombre)
-                except Exception as e:
-                    errores.append(f"{ruta}: {e}")
-
-            # Report result to user
-            if exitos:
-                try:
-                    self.vista.mostrar_mensaje("Information", "Uploaded", f"The file(s) {len(exitos)} has been uploaded.")
-                except Exception:
-                    pass
-                # close popup
-                try:
-                    self.vista.accept()
-                except Exception:
-                    pass
-
-            if errores:
-                # show errors as well (non-blocking)
-                try:
-                    self.vista.mostrar_mensaje("error", "Upload error", "\n".join(errores))
-                except Exception:
-                    pass
-
-            return
+            # Reuse the same handler logic to avoid duplicating behavior
+            return self._on_archivos_subidos(rutas)
 
         # 2) Fallback to original text-based behavior for backward compatibility
         if hasattr(self.vista, "texto"):
             texto = self.vista.texto.toPlainText().strip()
 
             if not texto:
-                self.vista.mostrar_mensaje("error", "Error", "Text must be fullfilled.")
+                try:
+                    self.vista.mostrar_mensaje("error", "Error", "Text must be fullfilled.")
+                except Exception:
+                    pass
                 return
 
             if len(texto) > 500:
-                self.vista.mostrar_mensaje("error", "Error", "Publication can't exceed 500 carachteres.")
+                try:
+                    self.vista.mostrar_mensaje("error", "Error", "Publication can't exceed 500 carachteres.")
+                except Exception:
+                    pass
                 return
 
             nueva_publicacion = PublicacionVO(
@@ -127,13 +187,21 @@ class ControladorPopupPublicacion:
                 cuentaOrigen=self.correo_usuario,
                 descripcion=texto
             )
-
-            self.dao.insertar_publicacion(nueva_publicacion)
-            self.vista.mostrar_mensaje("information", "Posted", "Your post has been saved.")
             try:
-                self.vista.accept()
+                self.dao.insertar_publicacion(nueva_publicacion)
+                try:
+                    self.vista.mostrar_mensaje("information", "Posted", "Your post has been saved.")
+                except Exception:
+                    pass
+                try:
+                    self.vista.accept()
+                except Exception:
+                    pass
             except Exception:
-                pass
+                try:
+                    self.vista.mostrar_mensaje("error", "Error", "Incompatible view: operation failed.")
+                except Exception:
+                    pass
             return
 
         # If neither API is present on the view, show a helpful error
