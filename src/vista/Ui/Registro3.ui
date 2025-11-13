@@ -53,7 +53,7 @@
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>60</y>
+      <y>120</y>
       <width>300</width>
       <height>41</height>
      </rect>
@@ -68,8 +68,8 @@
    <widget class="QPushButton" name="BotonRegistro">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>450</y>
+      <x>350</x>
+      <y>420</y>
       <width>121</width>
       <height>41</height>
      </rect>
@@ -93,9 +93,9 @@
    <widget class="QSpinBox" name="registro_edad">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>400</y>
-      <width>251</width>
+      <x>450</x>
+      <y>430</y>
+      <width>21</width>
       <height>22</height>
      </rect>
     </property>
@@ -109,9 +109,9 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>360</y>
-      <width>181</width>
+      <x>430</x>
+      <y>420</y>
+      <width>41</width>
       <height>31</height>
      </rect>
     </property>
@@ -150,8 +150,8 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>120</y>
+      <x>280</x>
+      <y>170</y>
       <width>251</width>
       <height>231</height>
      </rect>
@@ -226,10 +226,19 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QLineEdit" name="registro_nombre">
-       <property name="styleSheet">
-        <string notr="true">
+    </layout>
+   </widget>
+   <widget class="QLineEdit" name="registro_nombre">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>440</y>
+      <width>20</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
    QLineEdit {
        background-color: transparent;
        border: none;
@@ -241,14 +250,18 @@
        border-bottom: 3px solid #66bb6a;
    }
   </string>
-       </property>
-       <property name="placeholderText">
-        <string>Name</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    </property>
+    <property name="placeholderText">
+     <string>Name</string>
+    </property>
    </widget>
+   <zorder>label</zorder>
+   <zorder>registro_edad</zorder>
+   <zorder>label_12</zorder>
+   <zorder>BotonAtras</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>registro_nombre</zorder>
+   <zorder>BotonRegistro</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

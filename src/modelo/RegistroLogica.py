@@ -11,12 +11,13 @@ class RegistroLogica:
         self.estudiante_dao = estudiante_dao
 
     def registrar_usuario(self, correo, contraseña, confirmar, nombre, edad):
+        """
         if not nombre.strip() or not edad.strip():
             return False, "Please, complate name and age."
-
+        
         if not edad.isdigit() or int(edad) <= 0:
             return False, "Please, introduce a valid age."
-
+        """
         if contraseña != confirmar:
             return False, "Passwords aren't identical."
 

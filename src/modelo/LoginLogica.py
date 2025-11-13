@@ -29,12 +29,10 @@ class LoginLogica:
             return False, "Wrong password."
         
         # ¡¡¡¡¡Determinar si es estudiante o administrador por el correo
-        if "@gmail.com" in correo or "@outlook.com" in correo or "@hotmail.com" in correo:
+        if re.match(r"[^@]+@[^@]+\.(com|es)$", correo):
             return True, "estudiante"
-        elif "@unileon.es" in correo:
-            return True, "administrador"
         else:
-            return False, "Tipo de usuario no reconocido."
+            return False, "User not valid."
 
     def login(self, correo, contraseña):
         user = self.usuario_dao.obtener_por_correo(correo)
