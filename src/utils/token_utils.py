@@ -12,7 +12,7 @@ def create_access_token(payload, minutes=15):
     token = jwt.encode(data, ACCESS_TOKEN_SECRET, algorithm='HS256')
     return token
 
-def create_refresh_token(payload, days=7):
+def create_refresh_token(payload, days=1):
     exp = datetime.datetime.utcnow() + datetime.timedelta(days=days)
     data = payload.copy()
     data.update({"exp": exp})
