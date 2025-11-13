@@ -26,18 +26,23 @@ class PublicacionDAO:
     def obtener_todas_publicaciones(self):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local FROM Publicacion")
+            #  ORDENAR por fecha descendente (más reciente primero)
+            cursor.execute("""
+                SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local 
+                FROM Publicacion 
+                ORDER BY fecha DESC
+            """)
             filas = cursor.fetchall()
             publicaciones = []
             for fila in filas:
                 publicacion = PublicacionVO(
                     idPublic=fila[0],
                     fecha=fila[1],
-                    listaEtiquetados=eval(fila[2]) if fila[2] else [],  # Convertir string a lista
+                    listaEtiquetados=eval(fila[2]) if fila[2] else [],
                     cuentaOrigen=fila[3],
                     descripcion=fila[4],
-                    url_nube=fila[5],    # ← Nuevo campo
-                    ruta_local=fila[6]   # ← Nuevo campo
+                    url_nube=fila[5],
+                    ruta_local=fila[6]
                 )
                 publicaciones.append(publicacion)
             return publicaciones
@@ -46,7 +51,8 @@ class PublicacionDAO:
             return []
         finally:
             cursor.close()
-    
+
+
     def eliminar_publicacion(self, id_publicacion):
         sql = "DELETE FROM Publicacion WHERE idPublic = ?"
         self.cursor.execute(sql, (id_publicacion,))

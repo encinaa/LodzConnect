@@ -14,36 +14,35 @@ class ControladorTablon(ControladorBaseNavegable):
         self._vista.actualizar_publicaciones_clicked.connect(self.mostrar_publicaciones)
         self._vista.confirmar_eliminacion.connect(self.eliminar_publicacion)
 
+
     def mostrar_publicaciones(self):
+        """Carga y muestra las publicaciones desde la BD"""
         if not self._verificar_autenticacion():
             return
             
         try:
-            # ✅ 1. Obtener publicaciones de la BD
+            print("🔄 Actualizando publicaciones...")
+            
             publicaciones = self.publicacion_dao.obtener_todas_publicaciones()
             
-            # ✅ 2. Para cada publicación, verificar si tiene archivo en nube
+            
+            # ✅ SIMPLIFICADO: Solo marcar tipo para nube
             for publicacion in publicaciones:
                 if hasattr(publicacion, 'url_nube') and publicacion.url_nube:
-                    # Mostrar como enlace a la nube
                     publicacion.tipo = "nube"
                     publicacion.url = publicacion.url_nube
-                elif hasattr(publicacion, 'ruta_local') and publicacion.ruta_local and os.path.exists(publicacion.ruta_local):
-                    # Mostrar archivo local
-                    publicacion.tipo = "local" 
-                    publicacion.url = publicacion.ruta_local
-                else:
-                    # Es texto plano
-                    publicacion.tipo = "texto"
+                # Los demás serán tratados como texto automáticamente
             
-            # ✅ 3. Pasar a la vista
             self._vista.mostrar_lista_publicaciones(publicaciones, self.correo_usuario, 
-                                                   self.abrir_perfil_otro, 
-                                                   self._vista.emitir_confirmacion_eliminacion)
-                                                   
+                                                self.abrir_perfil_otro, 
+                                                self._vista.emitir_confirmacion_eliminacion)
+            
+            print(f"✅ Publicaciones actualizadas: {len(publicaciones)} encontradas")
+                                                
         except Exception as e:
             print(f"Error cargando publicaciones: {e}")
             self._vista.mostrar_mensaje_error("Error", "No se pudieron cargar las publicaciones")
+
 
     def eliminar_publicacion(self, publicacion):
         if not self._verificar_autenticacion():
@@ -54,19 +53,14 @@ class ControladorTablon(ControladorBaseNavegable):
         self._vista.mostrar_mensaje_info("Eliminated", "Your post has been eliminated")
 
     def abrir_perfil_otro(self, correo):
-        from src.vista.PerfilOtro import PerfilOtro
-        from src.controlador.ControladorPerfilOtro import ControladorPerfilOtro
-        vista_otro = PerfilOtro()
-        ControladorPerfilOtro(vista_otro, correo)
-        vista_otro.show()
-        self._vista.close()
+        pass
 
     def _verificar_autenticacion(self):
         """Método interno para verificar autenticación"""
         valido, datos = self.auth_middleware.verificar_token(self.access_token)
         
         if not valido:
-            self._vista.mostrar_mensaje_error("Sesión expirada", "Por favor, inicie sesión nuevamente")
+            self._vista.mostrar_mensaje_error("Expired session", "Please, log in again.")
             return False
         return True
 
