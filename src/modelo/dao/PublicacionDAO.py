@@ -7,32 +7,45 @@ class PublicacionDAO:
         self.cursor = self.conn.getCursor()
 
     def insertar_publicacion(self, publicacion):
-        sql = "INSERT INTO Publicacion (fecha, listaEtiquetados, cuentaOrigen, descripcion) VALUES (?, ?, ?, ?)"
-        self.cursor.execute(sql, (
-            publicacion.fecha,
-            ",".join(publicacion.listaEtiquetados),
-            publicacion.cuentaOrigen,
-            publicacion.descripcion  
-        ))
+        cursor = self.conn.getCursor()
+        try:
+            sql = """INSERT INTO Publicacion 
+                    (fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local) 
+                    VALUES (?, ?, ?, ?, ?, ?)"""
+            cursor.execute(sql, (
+                publicacion.fecha,
+                str(publicacion.listaEtiquetados),  # Convertir lista a string
+                publicacion.cuentaOrigen,
+                publicacion.descripcion,
+                publicacion.url_nube,
+                publicacion.ruta_local
+            ))
+        except Exception as e:
+            print("Error insertando publicación:", e)
 
     def obtener_todas_publicaciones(self):
-        sql = "SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion FROM Publicacion ORDER BY fecha DESC"
-        self.cursor.execute(sql)
-        filas = self.cursor.fetchall()
-
-        publicaciones = []
-        for fila in filas:
-            lista_etiquetados = fila[2].split(',') if fila[2] else []
-            publicacion = PublicacionVO(
-                idPublic=fila[0],
-                fecha=fila[1],
-                listaEtiquetados=lista_etiquetados,
-                cuentaOrigen=fila[3],
-                descripcion=fila[4]
-            )
-            publicaciones.append(publicacion)
-
-        return publicaciones
+        cursor = self.conn.getCursor()
+        try:
+            cursor.execute("SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local FROM Publicacion")
+            filas = cursor.fetchall()
+            publicaciones = []
+            for fila in filas:
+                publicacion = PublicacionVO(
+                    idPublic=fila[0],
+                    fecha=fila[1],
+                    listaEtiquetados=eval(fila[2]) if fila[2] else [],  # Convertir string a lista
+                    cuentaOrigen=fila[3],
+                    descripcion=fila[4],
+                    url_nube=fila[5],    # ← Nuevo campo
+                    ruta_local=fila[6]   # ← Nuevo campo
+                )
+                publicaciones.append(publicacion)
+            return publicaciones
+        except Exception as e:
+            print("Error obteniendo publicaciones:", e)
+            return []
+        finally:
+            cursor.close()
     
     def eliminar_publicacion(self, id_publicacion):
         sql = "DELETE FROM Publicacion WHERE idPublic = ?"

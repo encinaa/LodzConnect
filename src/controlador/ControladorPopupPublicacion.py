@@ -5,6 +5,8 @@ from datetime import datetime
 import os
 import shutil
 import uuid
+from src.api.nube_api import CloudStorageAPI 
+from src.api.nube_api_mock import CloudStorageAPIMock
 
 class ControladorPopupPublicacion:
     def __init__(self, vista, correo_usuario, access_token=None):
@@ -13,6 +15,21 @@ class ControladorPopupPublicacion:
         self.access_token = access_token
         self.dao = PublicacionDAO()
         self.auth_middleware = AuthMiddleware()
+
+
+        #MODIFICACION CON NUBE---------------------------------------------
+        # INTEGRACIÓN CON NUBE - API del compañero2
+        """
+        self.cloud_api = CloudStorageAPI(
+            base_url="https://tu-contenedor.ejemplo.com",  # URL que te dé tu compañero???
+            api_key="tu_api_key"  # Si necesita autenticación???
+        )
+        """
+#-------#PRUEBAS:
+        self.cloud_api = CloudStorageAPIMock()
+        print("🔧 MOCK API activado - Modo testing")
+#-------#FIN RPUEBAS.
+        #MODIFICACION CON NUBE---------------------------------------------
 
         # support both button names that may exist on different popup implementations
         boton = getattr(self.vista, "boton_publicar", None)
@@ -31,82 +48,75 @@ class ControladorPopupPublicacion:
             return False
         return True
 
+
     def publicar(self):
-        """
-        The popup used by the UI may be either:
-        - the original text-based PublicacionPopup (providing `texto` QTextEdit), or
-        - the file-upload popup (providing `obtener_rutas()`).
-        This method detects which one is present and performs the appropriate action:
-        - For text posts: keep previous behavior (validate text, create PublicacionVO and insert).
-        - For file uploads: copy the selected files into a local uploads folder and create a PublicacionVO
-          record for each uploaded file (description = filename). Adjust if you prefer storing full path
-          or other metadata.
-        """
-        # Verificar autenticación primero
+        #Versión MEJORADA que sube a la nube y guarda en BD
         if not self._verificar_autenticacion():
             return
 
-        # 1) File-upload path (new popup)
+        # 1) Manejo de archivos (PDFs)
         if hasattr(self.vista, "obtener_rutas"):
             rutas = self.vista.obtener_rutas()
             if not rutas:
-                # keep message type consistent with vista.mostrar_mensaje implementation
-                try:
-                    self.vista.mostrar_mensaje("Information", "No files", "No selected files to upload.")
-                except Exception:
-                    # fallback to a no-op if vista doesn't implement mostrar_mensaje
-                    pass
+                self.vista.mostrar_mensaje("Information", "No files", "No selected files to upload.")
                 return
 
-            # Prepare uploads directory inside current working dir; you can change this path
             uploads_dir = os.path.join(os.getcwd(), "uploads")
             os.makedirs(uploads_dir, exist_ok=True)
 
             errores = []
             exitos = []
+            
             for ruta in rutas:
                 try:
-                    nombre = os.path.basename(ruta)
-                    # prefix with uuid to avoid collisions
-                    destino_nombre = f"{uuid.uuid4().hex}_{nombre}"
-                    destino_path = os.path.join(uploads_dir, destino_nombre)
-                    shutil.copy2(ruta, destino_path)
+                    nombre_original = os.path.basename(ruta)
+                    """
+                    # 1. Subir a la nube
+                    url_nube = self._subir_a_nube(ruta, nombre_original)
+                    if not url_nube:
+                        errores.append(f"{nombre_original}: Error uploading to cloud")
+                        continue
+                    """
 
-                    # create a PublicacionVO record referring to the uploaded file (descripcion holds original filename)
+#-------------------#PRUEBAS:
+                    # ✅ 1. Subir a nube MOCK
+                    print(f"🔄 Intentando subir a nube mock: {nombre_original}")
+                    resultado = self.cloud_api.upload_file(ruta, nombre_original, self.access_token)
+                    
+                    if not resultado['success']:
+                        errores.append(f"{nombre_original}: {resultado.get('error', 'Error desconocido')}")
+                        continue
+                    
+                    url_nube = resultado['url']
+                    print(f"✅ Subido a nube mock: {url_nube}")
+#-------------------#FIN RPUEBAS.
+
+                    # 2. Guardar localmente (backup)
+                    nombre_local = f"{uuid.uuid4().hex}_{nombre_original}"
+                    destino_local = os.path.join(uploads_dir, nombre_local)
+                    shutil.copy2(ruta, destino_local)
+
+                    # 3. Guardar en BD con URL de la nube
                     nueva_publicacion = PublicacionVO(
                         idPublic=None,
                         fecha=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         listaEtiquetados=[],
                         cuentaOrigen=self.correo_usuario,
-                        descripcion=nombre
+                        descripcion=nombre_original,
+                        url_nube=url_nube,  # ← NUEVO CAMPO
+                        ruta_local=destino_local  # ← NUEVO CAMPO
                     )
-                    # insert into DB
+                    
                     self.dao.insertar_publicacion(nueva_publicacion)
-
-                    exitos.append(nombre)
+                    exitos.append(nombre_original)
+                    
                 except Exception as e:
                     errores.append(f"{ruta}: {e}")
 
-            # Report result to user
-            if exitos:
-                try:
-                    self.vista.mostrar_mensaje("Information", "Uploaded", f"The file(s) {len(exitos)} has been uploaded.")
-                except Exception:
-                    pass
-                # close popup
-                try:
-                    self.vista.accept()
-                except Exception:
-                    pass
-
-            if errores:
-                # show errors as well (non-blocking)
-                try:
-                    self.vista.mostrar_mensaje("error", "Upload error", "\n".join(errores))
-                except Exception:
-                    pass
-
+            # Mostrar resultados
+            self._mostrar_resultados_upload(exitos, errores)
             return
+
 
         # 2) Fallback to original text-based behavior for backward compatibility
         if hasattr(self.vista, "texto"):
@@ -141,3 +151,43 @@ class ControladorPopupPublicacion:
             self.vista.mostrar_mensaje("error", "Error", "Incompatible view: no 'texto' or 'obtener_rutas' found.")
         except Exception:
             pass
+
+    def _subir_a_nube(self, ruta_archivo, nombre_archivo):
+        """Sube archivo a la nube usando la API del compañero2"""
+        try:
+            # Usar el access_token JWT para autenticación
+            response = self.cloud_api.upload_file(
+                file_path=ruta_archivo,
+                destination_name=nombre_archivo,
+                access_token=self.access_token  # ← Tu token JWT
+            )
+            
+            if response and response.get('success'):
+                return response.get('url')  # URL del archivo en la nube
+            else:
+                print(f"Error uploading to cloud: {response}")
+                return None
+                
+        except Exception as e:
+            print(f"Exception uploading to cloud: {e}")
+            return None
+
+    def _mostrar_resultados_upload(self, exitos, errores):
+        """Muestra resultados de la subida"""
+        if exitos:
+            mensaje = f"Subidos {len(exitos)} archivos a la nube"
+            self.vista.mostrar_mensaje("Information", "Éxito", mensaje)
+            self.vista.accept()
+        
+        if errores:
+            self.vista.mostrar_mensaje("error", "Errores", "\n".join(errores))
+
+    # Método extra para debugging
+    def ver_estadisticas_mock(self):
+        """Muestra estadísticas del mock (útil para testing)"""
+        stats = self.cloud_api.get_upload_stats()
+        print("ESTADÍSTICAS MOCK:")
+        print(f"   Total subidas: {stats['total_uploads']}")
+        if stats['last_upload']:
+            print(f"   Última subida: {stats['last_upload']['original_name']}")
+            print(f"   URL mock: {stats['last_upload']['mock_url']}")
