@@ -11,7 +11,8 @@ class Login(QMainWindow, Form):
 
     def __init__(self):
         super().__init__()
-        self.setupUi(self) 
+        self.setupUi(self)
+        self.setWindowTitle("Lodz Connect")  # Set the window title here
 
         self.BotonAceptar.clicked.connect(self.aceptar_clicked)
         self.BotonVolver.clicked.connect(self.volver_clicked)
