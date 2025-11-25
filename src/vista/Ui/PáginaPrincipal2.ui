@@ -14,7 +14,7 @@
    <string>UniConecta</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../recursos.qrc">
+   <iconset>
     <normaloff>:/src/vista/imagenes/logoUniConecta.png</normaloff>:/src/vista/imagenes/logoUniConecta.png</iconset>
   </property>
   <property name="styleSheet">
@@ -79,7 +79,7 @@
       <x>390</x>
       <y>170</y>
       <width>321</width>
-      <height>101</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -88,7 +88,8 @@
     <property name="text">
      <string>   WELCOME
            TO
-UNICONECTA</string>
+        LODZ
+    CONNECT</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
