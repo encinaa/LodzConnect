@@ -2,8 +2,6 @@ from src.modelo.dao.UsuarioDAO import UsuarioDAO
 from src.modelo.LoginLogica import LoginLogica
 from src.vista.Tablon import Tablon
 from src.controlador.ControladorTablon import ControladorTablon
-from src.vista.TablonAdmin import TablonAdmin
-from src.controlador.ControladorTablonAdmin import ControladorTablonAdmin
 from src.utils.token_utils import create_access_token, create_refresh_token
 from src.modelo.dao.RefreshTokenDAO import RefreshTokenDAO
 import datetime
@@ -55,11 +53,6 @@ class ControladorLogin:
                     # Pasar el access_token al controlador
                     self.controlador_tablon = ControladorTablon(self.ventana_tablon, correo, tokens['access_token'])
                     self.ventana_tablon.show()
-                elif tipo_usuario == "administrador":
-                    self.ventana_admin = TablonAdmin()
-                    # Pasar el access_token al controlador
-                    self.controlador_admin = ControladorTablonAdmin(self.ventana_admin, correo, tokens['access_token'])
-                    self.ventana_admin.show()
                 else:
                     self._vista.mostrar_mensaje_error("Error", "User type unknown.")
                     return

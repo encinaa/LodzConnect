@@ -7,12 +7,8 @@ import os
 
 class PublicacionPopup(QDialog):
     """
-    Reworked popup: instead of creating a text "post", this dialog lets the user
-    select files (PDF by default), preview them in a list, remove selections and
-    "publish" (which in this implementation calls a parent hook
-    `on_archivos_subidos(list_of_paths)` if present).
-    Kept the original class name (PublicacionPopup) so existing call sites that
-    instantiate this class don't necessarily need to change.
+    Popup to select files (default: PDFs), preview them in a list, remove selections,
+    and "publish" (emits `archivos_subidos(list_of_paths)` and/or calls parent.on_archivos_subidos).
     """
     archivos_subidos = pyqtSignal(list)        # emitted when files are published
     archivos_actualizados = pyqtSignal(list)   # emitted when selection changes
@@ -21,6 +17,7 @@ class PublicacionPopup(QDialog):
         super().__init__(parent)
         self.setWindowTitle("New Post")
         self.setModal(True)
+        # remove context help button
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setFixedSize(560, 420)
 
@@ -53,24 +50,27 @@ class PublicacionPopup(QDialog):
         self._rutas = []
 
         # Connections
-        self.boton_subir.clicked.connect(self._seleccionar_archivos)
-        self.boton_eliminar.clicked.connect(self._eliminar_seleccionados)
+        self.boton_subir.clicked.connect(self.select_files)
+        self.boton_eliminar.clicked.connect(self.delete_selected)
         self.boton_cerrar.clicked.connect(self.reject)
-        self.boton_publicar.clicked.connect(self._publicar)
+        self.boton_publicar.clicked.connect(self.publish)
 
-        # cursors
+        # Cursors
         for b in (self.boton_subir, self.boton_publicar, self.boton_eliminar, self.boton_cerrar):
             b.setCursor(Qt.PointingHandCursor)
 
     def mostrar_mensaje(self, tipo, titulo, mensaje):
-        if tipo == "error":
-            QMessageBox.warning(self, titulo, mensaje)
-        elif tipo == "information":
+        """tipo: 'error' or 'information' (case-insensitive)"""
+        t = (tipo or "").lower()
+        if t == "error":
+            QMessageBox.critical(self, titulo, mensaje)
+        else:
             QMessageBox.information(self, titulo, mensaje)
 
-    def _seleccionar_archivos(self):
+    def select_files(self):
         archivos, _ = QFileDialog.getOpenFileNames(
-            self, "Select files (PDF)", "", "PDF Files (*.pdf);; All the files (*)"
+            self, "Select files (PDF)", os.getcwd(),
+            "PDF Files (*.pdf);;All Files (*)"
         )
         if not archivos:
             return
@@ -78,27 +78,27 @@ class PublicacionPopup(QDialog):
         for ruta in archivos:
             if ruta not in self._rutas:
                 self._rutas.append(ruta)
-                self._añadir_a_lista(ruta)
+                self.add_to_list(ruta)
                 añadidos.append(ruta)
         if añadidos:
             self.archivos_actualizados.emit(self._rutas.copy())
 
-    def _añadir_a_lista(self, ruta):
+    def add_to_list(self, ruta):
         nombre = os.path.basename(ruta)
         item = QListWidgetItem(nombre)
         item.setData(Qt.UserRole, ruta)
         self.lista.addItem(item)
 
-    def _eliminar_seleccionados(self):
+    def delete_selected(self):
         seleccion = self.lista.selectedItems()
         if not seleccion:
             return
+        # Iterate over a snapshot of selected items and remove them safely
         for item in seleccion:
             ruta = item.data(Qt.UserRole)
             row = self.lista.row(item)
-            take = self.lista.takeItem(row)
-            if take:
-                del take
+            # remove the item from the widget; returned item can be discarded
+            self.lista.takeItem(row)
             if ruta in self._rutas:
                 self._rutas.remove(ruta)
         self.archivos_actualizados.emit(self._rutas.copy())
@@ -110,13 +110,13 @@ class PublicacionPopup(QDialog):
         for r in rutas:
             if r not in self._rutas:
                 self._rutas.append(r)
-                self._añadir_a_lista(r)
+                self.add_to_list(r)
         self.archivos_actualizados.emit(self._rutas.copy())
 
     def obtener_rutas(self):
         return self._rutas.copy()
 
-    def _publicar(self):
+    def publish(self):
         rutas_a_publicar = list(self._rutas)  # defensive copy
 
         if not rutas_a_publicar:
@@ -128,7 +128,7 @@ class PublicacionPopup(QDialog):
 
         # Try calling a parent callback if available (keeps behavior compatible
         # with code that used the commented implementation)
-        parent = self.parent() or self.parentWidget()
+        parent = self.parent()
         if parent and hasattr(parent, "on_archivos_subidos"):
             try:
                 parent.on_archivos_subidos(rutas_a_publicar)
