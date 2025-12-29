@@ -13,8 +13,11 @@ class RefreshTokenDAO:
         try:
             # Convertir datetime a string en formato MySQL
             expires_at_str = expires_at.strftime('%Y-%m-%d %H:%M:%S')
-            
-            sql = "INSERT INTO RefreshToken (token, correo, expires_at, revoked) VALUES (?, ?, ?, ?)"
+
+            sql = """
+                INSERT INTO RefreshToken (token, correo, expires_at, revoked)
+                VALUES (%s, %s, %s, %s)
+            """
             cursor.execute(sql, (token, correo, expires_at_str, False))
         except Exception as e:
             print("Error insertando refresh token:", e)
@@ -24,13 +27,12 @@ class RefreshTokenDAO:
     def existe_token(self, token):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("SELECT revoked, expires_at FROM RefreshToken WHERE token = ?", (token,))
+            sql = "SELECT revoked, expires_at FROM RefreshToken WHERE token = %s"
+            cursor.execute(sql, (token,))
             resultado = cursor.fetchone()
             if resultado:
-                # Convertir string de MySQL a datetime si es necesario
-                revoked, expires_at_str = resultado
-                # Si quieres usar como datetime: expires_at = datetime.datetime.strptime(expires_at_str, '%Y-%m-%d %H:%M:%S')
-                return revoked, expires_at_str
+                revoked, expires_at = resultado
+                return revoked, expires_at
             return None
         except Exception as e:
             print("Error comprobando refresh token:", e)
@@ -41,7 +43,8 @@ class RefreshTokenDAO:
     def revocar_token(self, token):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("UPDATE RefreshToken SET revoked = ? WHERE token = ?", (True, token))
+            sql = "UPDATE RefreshToken SET revoked = %s WHERE token = %s"
+            cursor.execute(sql, (True, token))
         except Exception as e:
             print("Error revocando token:", e)
         finally:
@@ -51,8 +54,8 @@ class RefreshTokenDAO:
         """Revoca todos los tokens de un usuario (útil para logout)"""
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("UPDATE RefreshToken SET revoked = ? WHERE correo = ?", (True, correo))
-            #self.conn.getConexion().commit()
+            sql = "UPDATE RefreshToken SET revoked = %s WHERE correo = %s"
+            cursor.execute(sql, (True, correo))
             print(f"✓ Every token of {correo} revocked")
         except Exception as e:
             print("Error revocando tokens por correo:", e)

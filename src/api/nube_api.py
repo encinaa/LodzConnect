@@ -1,97 +1,71 @@
-"""AQUI ME DAIS VUESTRA API Q CONECTA CON LA NUBE"""
+# src/api/nube_api.py
+from azure.storage.blob import BlobClient
+from urllib.parse import urlparse, parse_qs, urlencode
 
-# Ejemplo cutron
-class CloudStorageAPI:
-    def __init__(self, base_url, api_key=None):
-        self.base_url = base_url
-        self.api_key = api_key
-    
-    def upload_file(self, file_path, destination_name, access_token=None):
-        # Sube archivo a la nube
-        pass
-    
-    def get_file_url(self, file_name):
-        # Devuelve URL para acceder al archivo
-        pass
-    
-    def list_files(self, access_token=None):
-        # Lista archivos en la nube
-        pass
-
-
-
-"""import requests
-import os
 
 class CloudStorageAPI:
-    def __init__(self, base_url, api_key=None):
-        self.base_url = base_url
-        self.api_key = api_key
-    
-    def upload_file(self, file_path, destination_name, access_token=None):
-        #Sube un archivo a la nube
-        
+    """
+    API real contra Azure Blob Storage usando una URL SAS de contenedor.
+    - La URL SAS completa se pasa en el constructor (sas_url).
+    - A partir de esa URL se construyen las URLs de cada blob.
+    """
+
+    def __init__(self, sas_url: str):
+        # URL SAS completa del contenedor, por ejemplo:
+        # https://lodzconnect.blob.core.windows.net/files?sp=...&sig=...
+        self.sas_url = sas_url
+
+        parsed = urlparse(sas_url)
+        # Parte base sin query (hasta /files)
+        self.base_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+        # Parámetros de la query (SAS tokens)
+        self.query_params = parse_qs(parsed.query, keep_blank_values=True)
+
+    def _build_blob_url(self, blob_name: str) -> str:
+        """
+        Construye la URL SAS de un blob concreto dentro del contenedor.
+        """
+        query = urlencode(self.query_params, doseq=True)
+        # Ojo con las dobles barras, por eso strip("/")
+        return f"{self.base_url.rstrip('/')}/{blob_name}?{query}"
+
+    def upload_file(self, file_path: str, destination_name: str, access_token=None):
+        """
+        Sube un archivo a Azure Blob Storage.
+        - file_path: ruta local del archivo
+        - destination_name: nombre con el que se guardará en el contenedor
+        """
         try:
-            # Preparar headers con autenticación
-            headers = {}
-            if access_token:
-                headers['Authorization'] = f'Bearer {access_token}'
-            elif self.api_key:
-                headers['X-API-Key'] = self.api_key
-            
-            # Leer archivo
-            with open(file_path, 'rb') as file:
-                files = {'file': (destination_name, file)}
-                
-                response = requests.post(
-                    f"{self.base_url}/upload",
-                    files=files,
-                    headers=headers,
-                    timeout=30
-                )
-            
-            if response.status_code == 200:
-                data = response.json()
-                return {
-                    'success': True,
-                    'url': data.get('url'),
-                    'file_id': data.get('file_id')
-                }
-            else:
-                return {
-                    'success': False,
-                    'error': f"Error {response.status_code}: {response.text}"
-                }
-                
+            blob_url = self._build_blob_url(destination_name)
+            blob_client = BlobClient.from_blob_url(blob_url)
+
+            with open(file_path, "rb") as data:
+                blob_client.upload_blob(data, overwrite=True)
+
+            return {
+                "success": True,
+                "url": blob_url,
+                "file_id": destination_name
+            }
+
         except Exception as e:
             return {
-                'success': False,
-                'error': str(e)
+                "success": False,
+                "error": str(e)
             }
-    
-    def get_file_url(self, file_name):
-        #Obtiene URL para descargar archivo
-        
-        return f"{self.base_url}/files/{file_name}"
-    
+
+    def get_file_url(self, file_name: str) -> str:
+        """
+        Devuelve la URL SAS de un blob ya existente.
+        """
+        return self._build_blob_url(file_name)
+
     def list_files(self, access_token=None):
-        #Lista archivos en la nube
-        
-        try:
-            headers = {}
-            if access_token:
-                headers['Authorization'] = f'Bearer {access_token}'
-            
-            response = requests.get(
-                f"{self.base_url}/files",
-                headers=headers,
-                timeout=30
-            )
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                return {'success': False, 'error': response.text}
-                
-        except Exception as e:
-            return {'success': False, 'error': str(e)}"""
+        """
+        Opcional: no la usamos ahora. Podrías implementarla con ContainerClient si quisieras.
+        De momento devolvemos un mensaje informativo.
+        """
+        return {
+            "success": False,
+            "error": "list_files no implementado para Azure en esta práctica"
+        }

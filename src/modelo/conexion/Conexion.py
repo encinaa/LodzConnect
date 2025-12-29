@@ -1,44 +1,58 @@
-import jaydebeapi
-from src.utils.singleton import singleton
+import mysql.connector
+from mysql.connector import Error
 
-@singleton #utils
+
 class Conexion:
-    def __init__(self, host='localhost', database='LodzConnect', user='root', password='Liverpool.840'):
+    def __init__(
+        self,
+        host="localhost",
+        database="LodzConnect",
+        user="root",
+        password="2852",  # <-- tu contraseña de MySQL
+    ):
         self._host = host
         self._database = database
         self._user = user
         self._password = password
-        self.conexion = self.createConnection()
+        self.conexion = self._create_connection()
 
-    def createConnection(self):
+    def _create_connection(self):
+        """Crea la conexión a MySQL usando mysql-connector-python."""
         try:
-            jdbc_driver = "com.mysql.cj.jdbc.Driver"
-            jar_file = "lib/mysql-connector-j-9.2.0.jar"
-            self.conexion = jaydebeapi.connect(
-                jdbc_driver,
-                f"jdbc:mysql://{self._host}/{self._database}",
-                [self._user, self._password],
-                jar_file
+            conn = mysql.connector.connect(
+                host=self._host,
+                port=3306,
+                user=self._user,
+                password=self._password,
+                database=self._database,
+                autocommit=True,   # 🔴 IMPORTANTE: activar autocommit
             )
-            return self.conexion
-        except Exception as e:
+            if conn.is_connected():
+                print("Conexión correcta a MySQL")
+            return conn
+        except Error as e:
             print("Error creando conexión:", e)
             return None
 
-    """Un cursor es una estructura de control que permite recorrer los resultados de una 
-    consulta SQL y manipular fila por fila los datos recuperados desde una base de datos."""
     def getCursor(self):
-        if self.conexion is None:
-            self.createConnection()
-        return self.conexion.cursor()
+        """
+        Devuelve un cursor listo para usar.
+        Si la conexión se ha caído, intenta reconectar.
+        """
+        if self.conexion is None or not self.conexion.is_connected():
+            self.conexion = self._create_connection()
+            if self.conexion is None:
+                raise RuntimeError("No se pudo establecer conexión con la BD.")
 
-    def closeConnection(self):
-        try:
-            if self.conexion:
-                self.conexion.close()
-                self.conexion = None
-        except Exception as e:
-            print("Error cerrando conexión:", e)
+        # buffered=True para poder hacer fetchall() sin problemas
+        return self.conexion.cursor(buffered=True)
 
-u = Conexion()
+    def commit(self):
+        """Por si algún sitio quiere hacer commit manualmente."""
+        if self.conexion is not None and self.conexion.is_connected():
+            self.conexion.commit()
 
+    def close(self):
+        """Cierra la conexión."""
+        if self.conexion is not None and self.conexion.is_connected():
+            self.conexion.close()

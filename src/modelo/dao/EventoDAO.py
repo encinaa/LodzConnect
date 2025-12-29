@@ -1,6 +1,7 @@
 from src.modelo.conexion.Conexion import Conexion
 from src.modelo.vo.EventoVO import EventoVO
 
+
 class EventoDAO:
     def __init__(self):
         self.conn = Conexion()
@@ -9,7 +10,7 @@ class EventoDAO:
     def insertar_evento(self, evento):
         sql = """
         INSERT INTO evento (nombre, descripcion, fecha, hora, ubicacion, aforoMax, aforoActual, correo_admin)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         self.cursor.execute(sql, (
             evento.nombre,
@@ -21,10 +22,13 @@ class EventoDAO:
             0,  # aforoActual empieza en 0
             evento.correo_admin
         ))
-        
 
     def obtener_todos_eventos(self):
-        sql = "SELECT idEve, nombre, descripcion, fecha, hora, ubicacion, aforoMax, aforoActual, correo_admin FROM evento"
+        sql = """
+        SELECT idEve, nombre, descripcion, fecha, hora, ubicacion,
+               aforoMax, aforoActual, correo_admin
+        FROM evento
+        """
         self.cursor.execute(sql)
         resultados = self.cursor.fetchall()
 
@@ -43,21 +47,19 @@ class EventoDAO:
             )
             eventos.append(evento)
         return eventos
-    
+
     def actualizar_aforo(self, id_evento, nuevo_aforo):
         try:
-            sql = "UPDATE evento SET aforoActual = ? WHERE idEve = ?"
+            sql = "UPDATE evento SET aforoActual = %s WHERE idEve = %s"
             self.cursor.execute(sql, (nuevo_aforo, id_evento))
-            
             return True
         except Exception as e:
             print(f"Error actualizando aforo: {e}")
             return False
 
-
     def eliminar_evento(self, id_evento):
         try:
-            sql = "DELETE FROM evento WHERE idEve = ?"
+            sql = "DELETE FROM evento WHERE idEve = %s"
             self.cursor.execute(sql, (id_evento,))
             return True
         except Exception as e:
@@ -68,11 +70,19 @@ class EventoDAO:
         try:
             sql = """
                 UPDATE evento
-                SET nombre=?, descripcion=?, fecha=?, hora=?, ubicacion=?, aforoMax=?, correo_admin=?
-                WHERE idEve=?
+                SET nombre = %s,
+                    descripcion = %s,
+                    fecha = %s,
+                    hora = %s,
+                    ubicacion = %s,
+                    aforoMax = %s,
+                    correo_admin = %s
+                WHERE idEve = %s
             """
-            self.cursor.execute(sql, (nombre, descripcion, fecha, hora, ubicacion, aforo_max, correo_admin, id_evento))
-
+            self.cursor.execute(sql, (
+                nombre, descripcion, fecha, hora,
+                ubicacion, aforo_max, correo_admin, id_evento
+            ))
             return True
         except Exception as e:
             print(f"Error al modificar evento: {e}")

@@ -2,7 +2,8 @@ from src.modelo.conexion.Conexion import Conexion
 from src.modelo.vo.UsuarioVO import UsuarioVO
 from src.utils.singleton import singleton
 
-@singleton #utils
+
+@singleton
 class UsuarioDAO:
     def __init__(self):
         self.conn = Conexion()  # Conexión a la base de datos
@@ -10,7 +11,8 @@ class UsuarioDAO:
     def existe_usuario(self, correo):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("SELECT 1 FROM Usuario WHERE correo = ?", (correo,))
+            sql = "SELECT 1 FROM Usuario WHERE correo = %s"
+            cursor.execute(sql, (correo,))
             return cursor.fetchone() is not None
         except Exception as e:
             print("Error comprobando existencia de usuario:", e)
@@ -21,7 +23,8 @@ class UsuarioDAO:
     def insertar_usuario(self, correo, contraseña):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("INSERT INTO Usuario (correo, contraseña) VALUES (?, ?)", (correo, contraseña))
+            sql = "INSERT INTO Usuario (correo, contraseña) VALUES (%s, %s)"
+            cursor.execute(sql, (correo, contraseña))
         except Exception as e:
             print("Error insertando usuario:", e)
         finally:
@@ -30,7 +33,8 @@ class UsuarioDAO:
     def obtener_contraseña(self, correo):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("SELECT contraseña FROM Usuario WHERE correo = ?", (correo,))
+            sql = "SELECT contraseña FROM Usuario WHERE correo = %s"
+            cursor.execute(sql, (correo,))
             resultado = cursor.fetchone()
             return resultado[0] if resultado else None
         except Exception as e:
@@ -42,7 +46,8 @@ class UsuarioDAO:
     def obtener_por_correo(self, correo):
         cursor = self.conn.getCursor()
         try:
-            cursor.execute("SELECT correo, contraseña FROM Usuario WHERE correo = ?", (correo,))
+            sql = "SELECT correo, contraseña FROM Usuario WHERE correo = %s"
+            cursor.execute(sql, (correo,))
             fila = cursor.fetchone()
             if fila:
                 return UsuarioVO(correo=fila[0], contraseña=fila[1])
@@ -56,8 +61,8 @@ class UsuarioDAO:
     def eliminar_usuario(self, correo):
         try:
             cursor = self.conn.getCursor()
-            cursor.execute("DELETE FROM Usuario WHERE correo = ?", (correo,))
+            sql = "DELETE FROM Usuario WHERE correo = %s"
+            cursor.execute(sql, (correo,))
             cursor.close()
         except Exception as e:
             print("Error eliminando usuario:", e)
-

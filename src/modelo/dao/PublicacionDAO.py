@@ -1,6 +1,7 @@
 from src.modelo.conexion.Conexion import Conexion
 from src.modelo.vo.PublicacionVO import PublicacionVO
 
+
 class PublicacionDAO:
     def __init__(self):
         self.conn = Conexion()
@@ -9,9 +10,11 @@ class PublicacionDAO:
     def insertar_publicacion(self, publicacion):
         cursor = self.conn.getCursor()
         try:
-            sql = """INSERT INTO Publicacion 
-                    (fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local) 
-                    VALUES (?, ?, ?, ?, ?, ?)"""
+            sql = """
+                INSERT INTO Publicacion
+                    (fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
             cursor.execute(sql, (
                 publicacion.fecha,
                 str(publicacion.listaEtiquetados),  # Convertir lista a string
@@ -22,13 +25,16 @@ class PublicacionDAO:
             ))
         except Exception as e:
             print("Error insertando publicación:", e)
+        finally:
+            cursor.close()
 
     def obtener_todas_publicaciones(self):
         cursor = self.conn.getCursor()
         try:
-            #  ORDENAR por fecha descendente (más reciente primero)
+            # Ordenar por fecha descendente (más reciente primero)
             cursor.execute("""
-                SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen, descripcion, url_nube, ruta_local 
+                SELECT idPublic, fecha, listaEtiquetados, cuentaOrigen,
+                       descripcion, url_nube, ruta_local 
                 FROM Publicacion 
                 ORDER BY fecha DESC
             """)
@@ -52,9 +58,11 @@ class PublicacionDAO:
         finally:
             cursor.close()
 
-
     def eliminar_publicacion(self, id_publicacion):
-        sql = "DELETE FROM Publicacion WHERE idPublic = ?"
-        self.cursor.execute(sql, (id_publicacion,))
-        #self.conn.getConexion().commit()
-
+        try:
+            cursor = self.conn.getCursor()
+            sql = "DELETE FROM Publicacion WHERE idPublic = %s"
+            cursor.execute(sql, (id_publicacion,))
+            cursor.close()
+        except Exception as e:
+            print("Error eliminando publicación:", e)
