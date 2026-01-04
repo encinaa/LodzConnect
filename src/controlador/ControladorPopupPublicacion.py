@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import shutil
 import uuid
+import traceback
 
 from src.api.nube_api import CloudStorageAPI
 
@@ -78,8 +79,18 @@ class ControladorPopupPublicacion:
                     nombre_original = os.path.basename(ruta)
 
                     # 1. Subir a Azure
-                    print(f"🔄 Subiendo a Azure: {nombre_original}")
-                    resultado = self.cloud_api.upload_file(ruta, nombre_original, self.access_token)
+
+                    es_zip = nombre_original.lower().endswith('.zip')
+                    # Si es ZIP, se descomprime antes de subirse
+                    if es_zip:
+                        print(f"📦 Detectado ZIP. Extrayendo en Azure: {nombre_original}")
+                        # Llamamos a la función de extracción
+                        resultado = self.cloud_api.upload_and_extract_zip(ruta, self.access_token)
+                    else:
+                        print(f"🔄 Subiendo archivo normal a Azure: {nombre_original}")
+                        # Subida estándar para PDFs u otros archivos
+                        resultado = self.cloud_api.upload_file(ruta, nombre_original, self.access_token)
+
 
                     if not resultado["success"]:
                         errores.append(f"{nombre_original}: {resultado.get('error', 'Error desconocido')}")
@@ -147,6 +158,81 @@ class ControladorPopupPublicacion:
             self.vista.mostrar_mensaje("error", "Error", "Incompatible view: no 'texto' or 'obtener_rutas' found.")
         except Exception:
             pass
+
+
+    def eliminar_publicacion(self, publicacion_id, url_nube=None, ruta_local=None):
+        """
+        Elimina una publicación de:
+        - la nube (Azure),
+        - la base de datos,
+        - y el archivo local dentro de 'uploads',
+        incluso si el directorio de ejecución cambió.
+        """
+        import os, traceback
+
+        try:
+            # 1️⃣ Eliminar de la nube (Azure)
+            if url_nube:
+                print(f"☁️ Eliminando en la nube: {url_nube}")
+                try:
+                    resultado = self.cloud_api.delete_file(url_nube, self.access_token)
+                    if not resultado.get("success", False):
+                        print("⚠️ No se pudo eliminar de Azure:", resultado.get("error"))
+                    else:
+                        print("✅ Archivo eliminado de Azure.")
+                except Exception as e:
+                    print("⚠️ Error al contactar Azure:", e)
+
+            # 2️⃣ Eliminar archivo local
+            archivo_encontrado = None
+            if ruta_local:
+                ruta_absoluta = os.path.abspath(ruta_local)
+                print(f"📂 Intentando eliminar archivo local: {ruta_absoluta}")
+
+                if os.path.exists(ruta_absoluta):
+                    archivo_encontrado = ruta_absoluta
+                else:
+                    # Intentar en carpeta uploads relativa al cwd
+                    uploads_dir = os.path.join(os.getcwd(), "uploads")
+                    posible = os.path.join(uploads_dir, os.path.basename(ruta_local))
+                    if os.path.exists(posible):
+                        archivo_encontrado = posible
+                    else:
+                        # Buscar dentro de todo el proyecto por nombre del archivo
+                        for root, dirs, files in os.walk(os.getcwd()):
+                            if os.path.basename(ruta_local) in files:
+                                archivo_encontrado = os.path.join(root, os.path.basename(ruta_local))
+                                break
+
+                if archivo_encontrado:
+                    try:
+                        os.remove(archivo_encontrado)
+                        print(f"🧹 Archivo local eliminado correctamente: {archivo_encontrado}")
+                    except Exception as e:
+                        print(f"⚠️ No se pudo eliminar el archivo local ({archivo_encontrado}): {e}")
+                else:
+                    print("ℹ️ No se encontró el archivo local para eliminar.")
+            else:
+                print("ℹ️ No se proporcionó ruta_local.")
+
+            # 3️⃣ Eliminar registro de la base de datos
+            print(f"🗑 Eliminando publicación con ID {publicacion_id}...")
+            filas_afectadas = self.dao.eliminar_publicacion(publicacion_id)
+
+            if filas_afectadas == 0:
+                self.vista.mostrar_mensaje("error", "No encontrado", "No se encontró la publicación en la base de datos.")
+                return
+
+            # 4️⃣ Mostrar mensaje de éxito
+            self.vista.mostrar_mensaje("information", "Eliminado", "La publicación y su archivo se eliminaron correctamente.")
+            if hasattr(self.vista, "actualizar_lista_publicaciones"):
+                self.vista.actualizar_lista_publicaciones()
+
+        except Exception as e:
+            print("❌ Error al eliminar publicación:", e)
+            print(traceback.format_exc())
+            self.vista.mostrar_mensaje("error", "Error interno", str(e))
+
 
     # ------------------------------------------------------------------
     #  AUXILIARES

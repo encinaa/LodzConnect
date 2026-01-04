@@ -32,16 +32,18 @@ class Eventos(VistaNavegable, Form):
         self.contenedor_publicaciones = self.findChild(QWidget, "contenedorEventos")
         if self.contenedor_publicaciones:
             logger.debug("Contenedor 'contenedorEventos' encontrado")
-            # Prefer container.layout() as layouts can be tricky to find by name
-            self.layout_publicaciones = getattr(self, "layoutPublicaciones", None) or self.contenedor_publicaciones.layout()
-            if self.layout_publicaciones:
-                logger.debug("Layout de publicaciones obtenido")
-            else:
-                logger.debug("No se pudo obtener el layout, creando uno nuevo")
+
+            # Intentar obtener layout existente
+            self.layout_publicaciones = self.contenedor_publicaciones.layout()
+
+            if self.layout_publicaciones is None:
+                logger.debug("No se encontró un layout existente, creando uno nuevo")
                 self.layout_publicaciones = QVBoxLayout()
                 self.layout_publicaciones.setContentsMargins(10, 10, 10, 10)
                 self.layout_publicaciones.setSpacing(10)
                 self.contenedor_publicaciones.setLayout(self.layout_publicaciones)
+            else:
+                logger.debug("Usando layout existente para contenedorEventos")
         else:
             logger.error("Contenedor 'contenedorEventos' NO encontrado")
             self.layout_publicaciones = None
