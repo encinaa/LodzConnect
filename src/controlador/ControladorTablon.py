@@ -18,41 +18,97 @@ class ControladorTablon(ControladorBaseNavegable):
 
 
     def mostrar_publicaciones(self):
-        """Carga y muestra las publicaciones desde la BD"""
+            """Carga y muestra publicaciones combinando BD local y archivos en la nube"""
+            if not self._verificar_autenticacion():
+                return
+                
+            try:
+                print("🔄 Sincronizando con la nube...")
+                
+                # 1. Obtener lo que tenemos en BD local
+                publicaciones_locales = self.publicacion_dao.obtener_todas_publicaciones()
+                # Crear un set de nombres de archivos que ya conocemos para evitar duplicados
+                nombres_en_bd = {p.url_nube.split('/')[-1].split('?')[0] for p in publicaciones_locales if p.url_nube}
+
+                # 2. Obtener la lista real de la nube (donde están las de otros)
+                res_nube = self.nube_api.list_files()
+                
+                lista_final = []
+
+                # 3. Procesar publicaciones de la BD local
+                for p in publicaciones_locales:
+                    if p.url_nube:
+                        p.tipo = "nube"
+                        p.url = p.url_nube
+                    lista_final.append(p)
+
+                # 4. Añadir archivos de la nube que NO están en nuestra BD (de otros usuarios)
+                if res_nube["success"]:
+                    for archivo_nube in res_nube["files"]:
+                        if archivo_nube["nombre"] not in nombres_en_bd:
+                            # Creamos un objeto genérico que la vista pueda entender
+                            # (Asegúrate de que este objeto tenga los atributos que tu vista requiere)
+                            nueva_p = type('Publicacion', (), {})() 
+                            nueva_p.idPublic = None # O un ID generado
+                            nueva_p.titulo = f"Archivo compartido: {archivo_nube['nombre']}"
+                            nueva_p.descripcion = "Subido por otro usuario"
+                            nueva_p.url = archivo_nube["url"]
+                            nueva_p.url_nube = archivo_nube["url"]
+                            nueva_p.tipo = "nube"
+                            nueva_p.usuario_correo = "Global" # Identificador para archivos ajenos
+                            lista_final.append(nueva_p)
+
+                # 5. Enviar a la vista
+                self._vista.mostrar_lista_publicaciones(
+                    lista_final, 
+                    self.correo_usuario, 
+                    self.abrir_perfil_otro, 
+                    self._vista.emitir_confirmacion_eliminacion
+                )
+                
+                print(f"✅ Mostrando {len(lista_final)} elementos (Local + Nube)")
+                                                    
+            except Exception as e:
+                print(f"Error sincronizando: {e}")
+                self._vista.mostrar_mensaje_error("Error", "It could not be synchronized with the cloud")
+
+    def eliminar_publicacion(self, publicacion):
+        """
+        Maneja la eliminación tanto de archivos locales+nube como 
+        de archivos que solo existen en la nube (de otros).
+        """
         if not self._verificar_autenticacion():
             return
             
         try:
-            print("🔄 Actualizando publicaciones...")
-            
-            publicaciones = self.publicacion_dao.obtener_todas_publicaciones()
-            
-            
-            # ✅ SIMPLIFICADO: Solo marcar tipo para nube
-            for publicacion in publicaciones:
-                if hasattr(publicacion, 'url_nube') and publicacion.url_nube:
-                    publicacion.tipo = "nube"
-                    publicacion.url = publicacion.url_nube
-                # Los demás serán tratados como texto automáticamente
-            
-            self._vista.mostrar_lista_publicaciones(publicaciones, self.correo_usuario, 
-                                                self.abrir_perfil_otro, 
-                                                self._vista.emitir_confirmacion_eliminacion)
-            
-            print(f"✅ Publicaciones actualizadas: {len(publicaciones)} encontradas")
-                                                
+            # 1. Extraer el nombre del blob desde la URL
+            # La URL tiene formato: .../contenedor/nombre_archivo?token_sas
+            blob_name = publicacion.url.split('/')[-1].split('?')[0]
+
+            # 2. Si la publicación tiene ID, existe en nuestra BD local
+            if hasattr(publicacion, 'idPublic') and publicacion.idPublic is not None:
+                print(f"🗑️ Eliminando publicación {publicacion.idPublic} y su archivo: {blob_name}")
+                # Borramos de la nube
+                res_nube = self.nube_api.delete_file(blob_name)
+                # Borramos de la BD
+                self.publicacion_dao.eliminar_publicacion(publicacion.idPublic)
+            else:
+                # 3. Si no tiene ID, es un archivo "fantasma" que solo está en la nube
+                print(f"🗑️ Eliminando archivo externo de la nube: {blob_name}")
+                res_nube = self.nube_api.delete_file(blob_name)
+
+            if res_nube["success"]:
+                self._vista.mostrar_mensaje_info("Eliminated", f"File '{blob_name}' has been deleted.")
+            else:
+                self._vista.mostrar_mensaje_error("Cloud Error", f"Could not delete from cloud: {res_nube['error']}")
+
+            # Refrescar la lista para que desaparezca
+            self.mostrar_publicaciones()
+
         except Exception as e:
-            print(f"Error cargando publicaciones: {e}")
-            self._vista.mostrar_mensaje_error("Error", "No se pudieron cargar las publicaciones")
+            print(f"❌ Error en proceso de eliminación: {e}")
+            self._vista.mostrar_mensaje_error("Error", "An error occurred during deletion.")
 
-
-    def eliminar_publicacion(self, publicacion):
-        if not self._verificar_autenticacion():
-            return
-            
-        self.publicacion_dao.eliminar_publicacion(publicacion.idPublic)
-        self.mostrar_publicaciones()
-        self._vista.mostrar_mensaje_info("Eliminated", "Your post has been eliminated")
 
     def abrir_perfil_otro(self, correo):
         pass

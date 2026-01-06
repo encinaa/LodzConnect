@@ -6,9 +6,9 @@ class Conexion:
     def __init__(
         self,
         host="localhost",
-        database="LodzConnect",
+        database="Uniconecta",
         user="root",
-        password="2852",  # <-- tu contraseña de MySQL
+        password="",  # <-- tu contraseña de MySQL
     ):
         self._host = host
         self._database = database

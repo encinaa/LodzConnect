@@ -1,5 +1,5 @@
 # src/api/nube_api.py
-from azure.storage.blob import BlobClient
+from azure.storage.blob import BlobClient, ContainerClient
 from urllib.parse import urlparse, parse_qs, urlencode
 import zipfile
 import os
@@ -64,13 +64,30 @@ class CloudStorageAPI:
 
     def list_files(self, access_token=None):
         """
-        Opcional: no la usamos ahora. Podrías implementarla con ContainerClient si quisieras.
-        De momento devolvemos un mensaje informativo.
+        Lista todos los archivos (blobs) que existen actualmente en el contenedor.
         """
-        return {
-            "success": False,
-            "error": "list_files no implementado para Azure en esta práctica"
-        }
+        try:
+            # Creamos un cliente de contenedor a partir de la URL SAS
+            container_client = ContainerClient.from_container_url(self.sas_url)
+            blobs = container_client.list_blobs()
+            
+            lista_archivos = []
+            for blob in blobs:
+                lista_archivos.append({
+                    "nombre": blob.name,
+                    "url": self._build_blob_url(blob.name),
+                    "size": blob.size
+                })
+                
+            return {
+                "success": True,
+                "files": lista_archivos
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
 
     def delete_file(self, blob_name: str):
             """
