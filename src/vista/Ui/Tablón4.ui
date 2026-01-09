@@ -87,7 +87,7 @@
         /* Fondo GRIS y BORDE MARCADO */
         QFrame#MenuLateral {
             background-color: #cccccc;
-            border: 1px solid #999999; /* CAMBIO: Borde añadido */
+            border: 1px solid #999999;
         }
 
         /* BOTONES LATERALES */
@@ -97,7 +97,7 @@
             border: none;
             font: bold 10pt &quot;Segoe UI&quot;;
             padding: 10px;
-            text-align: center; /* CAMBIO: Texto centrado */
+            text-align: center;
         }
 
         /* HOVER: Fondo VERDE */
@@ -184,24 +184,13 @@
            <height>50</height>
           </size>
          </property>
+         <property name="visible">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>My posts</string>
          </property>
         </widget>
-       </item>
-
-       <item>
-        <spacer name="spacer3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
 
        <item>
