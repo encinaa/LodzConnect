@@ -13,10 +13,7 @@ from src.api.nube_api import CloudStorageAPI
 
 # ⚠️ URL SAS COMPLETA DEL CONTENEDOR (NO LA SUBAS A UN REPO PÚBLICO)
 AZURE_SAS_URL = (
-    "https://lodzconnect.blob.core.windows.net/files"
-    "?sp=racwd&st=2025-12-29T13:36:04Z&se=2026-04-29T20:51:04Z"
-    "&spr=https&sv=2024-11-04&sr=c"
-    "&sig=CBGhQx9dfPr8zSlE5JLy65Qv3PkkfLKBOv%2BJND870tc%3D"
+    "https://uniconnection.blob.core.windows.net/files?sp=racwdli&st=2026-01-11T18:17:14Z&se=2026-06-30T01:32:14Z&spr=https&sv=2024-11-04&sr=c&sig=LA9iSkwjWL4LOunrbj3D%2BXGmqEwEb2bJuNp4KImdWg0%3D"
 )
 
 
